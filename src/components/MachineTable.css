@@ -1,0 +1,74 @@
+.machine-table {
+  padding: 20px;
+  background-color: black; /* Black background for the table */
+  color: white; /* White text for the overall component */
+}
+
+.form-container {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.form-input {
+  background-color: white; /* White input fields */
+  color: black; /* Black text for input fields */
+}
+
+/* Styling for the checkbox */
+.form-checkbox {
+  margin-top: 10px;
+  align-self: center;
+}
+
+/* Table styles */
+.MuiTableContainer-root {
+  background-color: #121212; /* Darker background for the table container */
+}
+
+.MuiTableHead-root {
+  background-color: darkred; /* Dark red header */
+}
+
+.MuiTableCell-root {
+  color: white; /* White color for table cell text */
+}
+
+/* Ensure all text in the table is white */
+.MuiTableCell-root,
+.MuiTableHead-root .MuiTableCell-root,
+.MuiTableBody-root .MuiTableCell-root {
+  color: white; /* Ensure all table cells have white text */
+}
+
+.MuiTableBody-root {
+  background-color: #1E1E1E; /* Darker color for the body */
+}
+
+/* Button styles */
+.MuiButton-root {
+  background-color: darkred !important; /* Ensure the button has a dark red background */
+  color: white !important; /* Ensure the button text is white */
+}
+
+.MuiButton-root:hover {
+  background-color: #A40000 !important; /* Lighter shade of dark red on hover */
+}
+
+/* Remove blue focus outline */
+.MuiButton-root:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Table row hover effect */
+.MuiTableRow-root:hover {
+  background-color: rgba(255, 0, 0, 0.2); /* Light red hover effect on table rows */
+}
+
+/* Styling for deleted rows */
+.deleted-row {
+  background-color: #ffcccc; /* Light red background for deleted rows */
+  color: white; /* Ensure text is white in deleted rows */
+}

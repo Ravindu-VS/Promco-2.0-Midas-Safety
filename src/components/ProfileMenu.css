@@ -1,0 +1,26 @@
+.profile-menu {
+    position: absolute;
+    top: 60px; /* Adjust based on header height */
+    right: 20px;
+    background-color: #444; /* Dark background for the menu */
+    border: 1px solid white;
+    z-index: 10;
+    border-radius: 5px; /* Rounded corners */
+}
+
+.profile-menu ul {
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.profile-menu ul li {
+    padding: 10px;
+    color: white; /* White text color */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.profile-menu ul li:hover {
+    background-color: darkred; /* Highlight on hover */
+}

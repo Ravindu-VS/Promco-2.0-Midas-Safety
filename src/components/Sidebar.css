@@ -1,0 +1,157 @@
+/* Adjust Sidebar to account for the Topbar */
+.sidebar {
+  position: fixed;
+  top: 60px; /* Adjust for Topbar */
+  left: 0;
+  width: 278px; /* Wider sidebar for better space */
+  height: calc(100vh - 60px); /* Subtract Topbar height from viewport height */
+  background-color: #2b2b2b; /* Dark grey for sidebar */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 1; /* Ensure sidebar is above other content */
+  box-shadow: 3px 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for sidebar */
+  transition: all 0.3s ease; /* Smooth transition for width changes */
+}
+
+/* Sidebar collapsed state for smaller screens */
+.sidebar.collapsed {
+  width: 80px; /* Collapsed sidebar for smaller screens */
+}
+
+/* User Info Section at the top of the Sidebar */
+.user-info {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  background-color: #1f1f1f; /* Darker grey for user info section */
+  border-bottom: 1px solid #444; /* Subtle border */
+}
+
+.profile-icon {
+  height: 3rem;
+  width: 3rem;
+  background-color: #b30000; /* Dark red for profile icon */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 1rem; /* Spacing between icon and user info */
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.user-email,
+.user-role {
+  color: #a0a0a0; /* Grey text for email and role */
+  font-size: 0.875rem;
+}
+
+/* Sidebar Links Section */
+.sidebar-links {
+  margin-top: 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Space between links */
+}
+
+.sidebar-links a {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff; /* White text for sidebar links */
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-links a:hover {
+  background-color: #b30000; /* Dark red hover effect */
+}
+
+.sidebar-links a.active {
+  background-color: #b30000; /* Active link background */
+  font-weight: bold;
+}
+
+.sidebar-links a .icon {
+  margin-right: 10px; /* Space between icon and text */
+  color: #a0a0a0; /* Grey icon */
+  transition: color 0.3s ease;
+}
+
+.sidebar-links a:hover .icon {
+  color: #ffffff; /* White icon on hover */
+}
+
+.sidebar-links .Mui-selected {
+  background-color: #b30000 !important; /* Active link background */
+  font-weight: bold; /* Bold text for active link */
+}
+
+/* Nested Links for Submenu */
+.nested-link {
+  padding-left: 40px; /* Indent nested links for submenu */
+}
+
+.nested-link a {
+  font-size: 0.9rem;
+  color: #cfcfcf; /* Lighter grey for nested links */
+}
+
+.nested-link a:hover {
+  background-color: #b30000;
+  color: #ffffff; /* White on hover */
+}
+
+/* Collapse and Expand icons */
+.icon {
+  color: #a0a0a0;
+  font-size: 1.25rem;
+}
+
+.icon:hover {
+  color: #ffffff;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px; /* Shrink sidebar width for mobile */
+  }
+
+  .sidebar .user-info {
+    flex-direction: column;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .profile-icon {
+    margin-right: 0; /* Remove spacing in mobile view */
+    margin-bottom: 10px; /* Add some bottom margin */
+  }
+
+  .user-name,
+  .user-email,
+  .user-role {
+    font-size: 0.85rem; /* Smaller text size for mobile */
+  }
+
+  .sidebar-links a {
+    padding: 12px;
+    font-size: 0.85rem; /* Reduce font size */
+  }
+
+  .nested-link {
+    padding-left: 20px; /* Reduce padding for nested links */
+  }
+}

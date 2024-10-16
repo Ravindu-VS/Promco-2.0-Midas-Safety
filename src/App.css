@@ -1,38 +1,85 @@
-.App {
-  text-align: center;
-}
+/* App.css */
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Wrapper for the whole application layout */
+.app-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh; /* Full viewport height */
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f5f5f5;
+  margin-left: 250px; /* Adjusting based on Sidebar width */
+  margin-top: 60px; /* Adjusting based on Topbar height */
+  overflow-y: auto;
+  min-height: calc(100vh - 60px); /* Ensure full page content area */
+}
+
+/* Styling for the login page to center it properly */
+.login-page {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  height: 100vh; /* Full height for centering */
+  background-color: #f4f4f4;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: fixed;
+  top: 60px; /* Below the Topbar */
+  left: 0;
+  width: 250px;
+  height: calc(100% - 60px); /* Full height minus topbar */
+  background-color: #1e293b;
+  color: #fff;
+  padding-top: 20px;
+}
+
+/* Topbar Styling */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #1e293b;
   color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100; /* Ensure it's above other elements */
 }
 
-.App-link {
-  color: #61dafb;
+/* Button Styling for the login form */
+.login-button {
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.login-button:hover {
+  background-color: #444;
+}
+
+/* Responsive design tweaks */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .topbar {
+    height: 50px;
+  }
+
+  .main-content {
+    margin-left: 200px; /* Adjust content margin when sidebar is smaller */
+    margin-top: 50px; /* Adjust topbar height on smaller screens */
   }
 }

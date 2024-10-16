@@ -1,0 +1,135 @@
+/* General Styling */
+h1 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+/* Add User Button Styling */
+.add-button {
+  background-color: darkred !important;
+  color: white !important;
+  margin-bottom: 20px;
+}
+
+.add-button:hover {
+  background-color: #A40000 !important;
+}
+
+/* Table Container Styling */
+.table-container {
+  background-color: #121212;
+}
+
+/* Table Header Cell Styling */
+.table-header-cell {
+  background-color: darkred;
+  color: white;
+  font-weight: bold;
+}
+
+/* Table Cell Styling */
+.table-cell {
+  color: white;
+}
+
+.table-cell, .table-header-cell {
+  border-bottom: 1px solid #444;
+}
+
+/* Dialog Titles and Content Styling */
+.dialog-title {
+  color: white;
+}
+
+.dialog-content {
+  background-color: #1E1E1E;
+  color: white;
+}
+
+/* Input Fields in Dialog */
+.dialog-input .MuiInputBase-root {
+  color: white;
+}
+
+.dialog-input .MuiInputLabel-root {
+  color: #bbb;
+}
+
+.dialog-input .MuiInputBase-root:after {
+  border-bottom-color: darkred;
+}
+
+.dialog-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
+  border-bottom-color: darkred;
+}
+
+/* Cancel Button Styling */
+.cancel-button {
+  color: white;
+  border: 1px solid white;
+}
+
+.cancel-button:hover {
+  background-color: #444;
+}
+
+/* Save Button Styling */
+.save-button {
+  background-color: darkred;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #A40000;
+}
+
+/* Icon Button Styling */
+.MuiIconButton-root {
+  color: white;
+}
+
+.MuiIconButton-root:hover {
+  color: #A40000;
+}
+
+/* Action Icons Styling */
+.action-icon {
+  color: white;
+}
+
+.action-icon:hover {
+  color: #A40000;
+}
+
+/* Dialog Background and Styling */
+.MuiDialog-paper {
+  background-color: #1E1E1E !important;
+  color: white;
+}
+
+/* Focused Label Color */
+.MuiFormLabel-root.Mui-focused {
+  color: darkred !important;
+}
+
+/* Customize Select Field Icon Color */
+.MuiSelect-icon {
+  color: white;
+}
+
+/* Password Input Field Styling */
+.dialog-password-input .MuiInputBase-root {
+  color: white;
+}
+
+.dialog-password-input .MuiInputLabel-root {
+  color: #bbb;
+}
+
+.dialog-password-input .MuiInputBase-root:after {
+  border-bottom-color: darkred;
+}
+
+.dialog-password-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
+  border-bottom-color: darkred;
+}

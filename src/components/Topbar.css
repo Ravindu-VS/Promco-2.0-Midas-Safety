@@ -1,0 +1,60 @@
+/* Topbar Styling */
+.topbar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  height: 60px;
+  background-color: #ffffff; /* Slightly lighter dark red */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 70;
+}
+
+.topbar-left .logo {
+  height: 50px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  position: relative; /* Allow icon to be positioned correctly */
+  right: 50px;
+}
+
+.account-icon {
+  color: #000000; 
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Dropdown Menu */
+.menu-item {
+  position: absolute;
+  top: 60px; /* Below topbar */
+  right: 20px;
+  background-color: #444444; /* Dark grey menu background */
+  border: 1px solid white;
+  border-radius: 5px;
+  z-index: 100;
+}
+
+.menu-item ul {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.menu-item ul li {
+  padding: 10px;
+  color: white; /* White text for menu items */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.menu-item ul li:hover {
+  background-color: #b30000; /* Dark red hover effect */
+}

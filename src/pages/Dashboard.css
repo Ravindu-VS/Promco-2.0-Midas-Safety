@@ -1,0 +1,112 @@
+/* General Reset */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text */
+}
+
+/* Main Content Styling */
+.dashboard-main-content {
+  flex: 1;
+  background-color: #000000; /* Dark grey background for contrast */
+  padding: 2rem;
+  width: calc(100vw - 65px); /* Account for sidebar width */
+  height: 100vh;
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+/* Centering Content */
+.dashboard-content {
+  padding: 3rem;
+  width: 100%;
+  height: calc(100% - 4rem); /* Ensure it fits in the content area */
+  box-sizing: border-box;
+}
+
+/* Dashboard Layout */
+.dashboard-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: right;
+  gap: 7rem; /* Spacing between cards */
+}
+
+/* Cards Styling */
+.dashboard-card {
+  background-color: #521515; /* Softer red for card background */
+  border-radius: 12px;
+  padding: 2rem;
+  width: calc(34% - 1rem); /* Fit 3 cards per row */
+  min-width: 250px; /* Prevent card from shrinking too much */
+  color: #ffffff; /* White text on cards */
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Welcome Section */
+.welcome-section {
+  width: 110%;
+  height: 200px;
+  background: url('https://www.midassafety.com/wp-content/uploads/2022/06/Midas-Sustainability-1920x560-b.jpg') no-repeat center center;
+  background-size: cover;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+}
+
+.welcome-text {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Card Titles */
+.card-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ffffff; /* White text for dark red cards */
+  margin-bottom: 1rem;
+}
+
+/* Machine Data and Calendar Card Styling */
+.machine-data-card, .calendar-card {
+  background-color: #ffffff; /* White cards */
+  color: #000000; /* Black text */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-card {
+    width: calc(45% - 1rem); /* Adjust to 2 cards per row */
+  }
+
+  .welcome-text {
+    font-size: 2rem; /* Smaller text on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-card {
+    width: 100%; /* Single-column layout on small screens */
+  }
+
+  .welcome-text {
+    font-size: 1.5rem; /* Further reduce text size */
+  }
+}

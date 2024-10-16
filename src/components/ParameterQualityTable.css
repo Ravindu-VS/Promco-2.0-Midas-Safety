@@ -1,0 +1,48 @@
+/* General styles for the form */
+.form-container {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .form-input {
+    background-color: white;
+    color: black;
+  }
+  
+  /* Custom styles for buttons */
+  .add-button {
+    background-color: darkred;
+    color: white;
+  }
+  
+  .add-button:hover {
+    background-color: #A40000;
+  }
+  
+  /* Table container and header */
+  .MuiTableContainer-root {
+    background-color: #121212; /* Darker background for the table container */
+  }
+  
+  .MuiTableHead-root {
+    background-color: darkred; /* Dark red header */
+    color: white;
+  }
+  
+  /* Table cells and body */
+  .MuiTableCell-root {
+    color: #FFD700; /* Gold text for table cells */
+  }
+  
+  .MuiTableBody-root {
+    background-color: #1E1E1E; /* Darker color for the body */
+  }
+  
+  /* Pagination control */
+  .MuiTablePagination-root {
+    background-color: #1E1E1E; /* Dark background for pagination */
+    color: white;
+  }
+  
