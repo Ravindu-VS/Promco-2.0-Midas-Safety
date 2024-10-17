@@ -1,8 +1,8 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: black; /* Background color for the page */
-    color: white; /* Default text color */
+    background-color: rgb(255, 255, 255); /* Background color for the page */
+    color: rgb(0, 0, 0); /* Default text color */
 }
 
 h1, h2, h3, p {

@@ -9,109 +9,103 @@ import {
   TablePagination,
   Paper,
   TextField,
-  Button
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Snackbar,
+  Alert,
 } from "@mui/material";
-import './ParameterTable.css'; 
-
+import './Table.css';
 
 const ParameterTable = () => {
-  const [parameters, setParameters] = useState([]); // State to store parameter data
+  const [parameters, setParameters] = useState([]);
   const [newParameter, setNewParameter] = useState({
     parameter: "",
     hasDeleted: false,
-    createdTime: "",
-    modifiedTime: "",
-    plannedEpld: ""
-  }); // State for new parameter input
+    plannedEpld: "",
+  });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
-  // Fetch initial parameter data (mocked for demonstration)
   useEffect(() => {
+    // Fetch initial parameter data
     const initialData = [
       {
+        id: 1,
         parameter: "Param A",
         hasDeleted: false,
         createdTime: new Date().toISOString(),
         modifiedTime: new Date().toISOString(),
-        plannedEpld: "2024-12-31"
+        plannedEpld: "2024-12-31",
       },
       {
+        id: 2,
         parameter: "Param B",
         hasDeleted: true,
         createdTime: new Date().toISOString(),
         modifiedTime: new Date().toISOString(),
-        plannedEpld: "2024-11-30"
-      }
+        plannedEpld: "2024-11-30",
+      },
     ];
     setParameters(initialData);
   }, []);
 
-  // Handle adding a new parameter
   const handleAddParameter = () => {
+    if (!newParameter.parameter || !newParameter.plannedEpld) {
+      setSnackbarMessage("Please fill all required fields.");
+      setOpenSnackbar(true);
+      return;
+    }
+
     const newParameterData = {
       ...newParameter,
-      createdTime: new Date().toISOString(), // Set created time
-      modifiedTime: new Date().toISOString() // Set modified time
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+      id: parameters.length + 1, // or use a more robust id generator
     };
+
     setParameters([...parameters, newParameterData]);
-    setNewParameter({
-      parameter: "",
-      hasDeleted: false,
-      createdTime: "",
-      modifiedTime: "",
-      plannedEpld: ""
-    });
+    setNewParameter({ parameter: "", hasDeleted: false, plannedEpld: "" });
+    setSnackbarMessage("Parameter added successfully!");
+    setOpenSnackbar(true);
   };
 
-  // Auto-update data every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setParameters(prevParameters => {
-        return prevParameters.map(param => ({
-          ...param,
-          modifiedTime: new Date().toISOString() // Update modified time to current time
-        }));
-      });
-    }, 5000); // Update every 5 seconds
-
-    return () => clearInterval(interval); // Clear interval on component unmount
+      setParameters((prevParameters) => prevParameters.map(param => ({
+        ...param,
+        modifiedTime: new Date().toISOString()
+      })));
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
-
-  // Handle page change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  // Handle rows per page change
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   return (
     <div className="machine-table">
-      {/* Form for adding new parameters */}
       <div className="form-container mb-4">
         <TextField
           label="Parameter"
           variant="outlined"
           value={newParameter.parameter}
-          onChange={e => setNewParameter({ ...newParameter, parameter: e.target.value })}
+          onChange={(e) => setNewParameter({ ...newParameter, parameter: e.target.value })}
           className="form-input mr-2"
         />
-        <TextField
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={newParameter.hasDeleted}
+              onChange={(e) => setNewParameter({ ...newParameter, hasDeleted: e.target.checked })}
+            />
+          }
           label="Has Deleted"
-          type="checkbox"
-          checked={newParameter.hasDeleted}
-          onChange={e => setNewParameter({ ...newParameter, hasDeleted: e.target.checked })}
-          className="form-checkbox mr-2"
         />
         <TextField
           label="Planned Epld"
           variant="outlined"
           value={newParameter.plannedEpld}
-          onChange={e => setNewParameter({ ...newParameter, plannedEpld: e.target.value })}
+          onChange={(e) => setNewParameter({ ...newParameter, plannedEpld: e.target.value })}
           className="form-input mr-2"
         />
         <Button variant="contained" className="add-button" onClick={handleAddParameter}>
@@ -119,7 +113,6 @@ const ParameterTable = () => {
         </Button>
       </div>
 
-      {/* Parameter Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -132,31 +125,37 @@ const ParameterTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {parameters
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((param, index) => (
-                <TableRow key={index}>
-                  <TableCell>{param.parameter}</TableCell>
-                  <TableCell>{param.hasDeleted ? "Yes" : "No"}</TableCell>
-                  <TableCell>{param.createdTime}</TableCell>
-                  <TableCell>{param.modifiedTime}</TableCell>
-                  <TableCell>{param.plannedEpld}</TableCell>
-                </TableRow>
-              ))}
+            {parameters.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((param) => (
+              <TableRow key={param.id}>
+                <TableCell>{param.parameter}</TableCell>
+                <TableCell>{param.hasDeleted ? "Yes" : "No"}</TableCell>
+                <TableCell>{param.createdTime}</TableCell>
+                <TableCell>{param.modifiedTime}</TableCell>
+                <TableCell>{param.plannedEpld}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={parameters.length}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={(event, newPage) => setPage(newPage)}
+        onRowsPerPageChange={(event) => {
+          setRowsPerPage(parseInt(event.target.value, 10));
+          setPage(0);
+        }}
       />
+
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

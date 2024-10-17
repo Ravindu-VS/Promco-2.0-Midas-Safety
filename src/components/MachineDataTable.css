@@ -1,25 +1,22 @@
-/* Machine Data Table Styling */
-.machine-data-table-container {
-    padding: 20px; /* Padding around the table */
-    background-color: #1a1a1a; /* Dark grey background to match theme */
-    border-radius: 10px; /* Rounded corners for the container */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-    margin: 20px; /* Margin around the table container */
-}
-
 /* Table Styling */
 .machine-data-table {
     width: 100%; /* Full width for the table */
-    border-collapse: collapse; /* Remove double borders */
+    border-collapse: separate; /* Use 'separate' instead of 'collapse' */
+    border-spacing: 0; /* Prevent spacing between cells */
+    border-radius: 10px;
+    overflow: hidden; /* Ensure the rounding is visible */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Add subtle shadow around the table */
 }
 
+/* Header styling */
 .header {
-    background-color: #b30000; /* Dark red background for headers */
+    background-color: #be171d; /* Dark red background for headers */
     color: white; /* White text color for headers */
     padding: 12px; /* Padding for header cells */
     text-align: left; /* Align text to the left */
 }
 
+/* Data cell styling */
 .cell {
     background-color: #ffffff; /* White background for data cells */
     color: #000000; /* Black text color for data cells */
@@ -30,4 +27,9 @@
 /* Hover effect for table rows */
 .machine-data-table tbody tr:hover {
     background-color: #f5f5f5; /* Light grey background on hover */
+}
+
+/* Table Outline Shadow */
+.machine-data-table {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* More pronounced shadow for the table */
 }

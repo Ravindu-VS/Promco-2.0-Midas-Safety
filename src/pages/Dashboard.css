@@ -5,14 +5,14 @@ html, body {
   padding: 0;
   overflow: hidden;
   font-family: 'Arial', sans-serif;
-  background-color: #000000; /* Black background */
-  color: #ffffff; /* White text */
+  background-color: #ffffff;
+  color: #000000; 
 }
 
 /* Main Content Styling */
 .dashboard-main-content {
   flex: 1;
-  background-color: #000000; /* Dark grey background for contrast */
+  background-color: #ffffff; 
   padding: 2rem;
   width: calc(100vw - 65px); /* Account for sidebar width */
   height: 100vh;
@@ -32,12 +32,12 @@ html, body {
   display: flex;
   flex-wrap: wrap;
   justify-content: right;
-  gap: 7rem; /* Spacing between cards */
+  gap: 6.3rem; /* Spacing between cards */
 }
 
 /* Cards Styling */
 .dashboard-card {
-  background-color: #521515; /* Softer red for card background */
+  background-color: #ffffff; /* Softer red for card background */
   border-radius: 12px;
   padding: 2rem;
   width: calc(34% - 1rem); /* Fit 3 cards per row */
@@ -55,9 +55,11 @@ html, body {
 /* Welcome Section */
 .welcome-section {
   width: 110%;
-  height: 200px;
-  background: url('https://www.midassafety.com/wp-content/uploads/2022/06/Midas-Sustainability-1920x560-b.jpg') no-repeat center center;
-  background-size: cover;
+  height: 250px;
+  background-image: url('/public/welcome.png'); /* Relative to public folder */
+  background-size:77%; /* Adjust image size */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
   border-radius: 10px;
   margin-bottom: 2rem;
   display: flex;
@@ -65,12 +67,6 @@ html, body {
   justify-content: center;
   color: #ffffff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
-}
-
-.welcome-text {
-  font-size: 3.5rem;
-  font-weight: bold;
-  color: #ffffff;
 }
 
 /* Card Titles */

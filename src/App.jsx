@@ -1,4 +1,5 @@
 import { Routes, Route, Outlet } from "react-router-dom";
+import ThemeToggleButton from "./components/ThemeToggleButton";
 import Topbar from "./components/Topbar";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
@@ -13,8 +14,8 @@ import SectionTemplate from './pages/SectionTemplate';
 import SubSection from './pages/SubSection';
 import Tolerance from './pages/Tolerance';
 import UserManage from './pages/UserManage';
-import Profile from './components/Profile'; // Import Profile component
-import Settings from "./components/Settings"; // Import Settings component
+import Profile from './components/Profile';
+import Settings from "./components/Settings";
 
 // Sample user data
 const user = {
@@ -25,8 +26,8 @@ const user = {
   email: 'john.doe@example.com',
   role: 'Admin',
   profilePicture: '', // Add a default or placeholder image URL if available
-  joinedDate: new Date(), // Example joined date
-  phone: '+1 234 567 890', // Add phone if needed
+  joinedDate: new Date(),
+  phone: '+1 234 567 890',
 };
 
 // Dashboard Layout Component (Topbar + Sidebar + Content)
@@ -42,27 +43,31 @@ const DashboardLayout = () => (
 
 function App() {
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Login />} /> {/* Login page - no topbar/sidebar */}
+    <div>
+      <ThemeToggleButton /> {/* This ensures the button is visible on all pages, including Login */}
       
-      {/* Dashboard Routes */}
-      <Route element={<DashboardLayout />}> {/* Layout wrapping all dashboard routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile user={user} />} /> {/* Pass user data to Profile */}
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/UserManage" element={<UserManage />} />
-        <Route path="/masterData" element={<MasterData />} />
-        <Route path="/machine" element={<Machine />} />
-        <Route path="/machine-type" element={<MachineType />} />
-        <Route path="/main-section" element={<MainSection />} />
-        <Route path="/parameter" element={<Parameter />} />
-        <Route path="/parameter-qualified-value" element={<ParameterQualifiedValue />} />
-        <Route path="/section-template" element={<SectionTemplate />} />
-        <Route path="/sub-section" element={<SubSection />} />
-        <Route path="/tolerance" element={<Tolerance />} /> 
-      </Route>
-    </Routes>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Login />} /> {/* Login page - no topbar/sidebar */}
+        
+        {/* Dashboard Routes */}
+        <Route element={<DashboardLayout />}> {/* Layout wrapping all dashboard routes */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile user={user} />} /> {/* Pass user data to Profile */}
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/UserManage" element={<UserManage />} />
+          <Route path="/masterData" element={<MasterData />} />
+          <Route path="/machine" element={<Machine />} />
+          <Route path="/machine-type" element={<MachineType />} />
+          <Route path="/main-section" element={<MainSection />} />
+          <Route path="/parameter" element={<Parameter />} />
+          <Route path="/parameter-qualified-value" element={<ParameterQualifiedValue />} />
+          <Route path="/section-template" element={<SectionTemplate />} />
+          <Route path="/sub-section" element={<SubSection />} />
+          <Route path="/tolerance" element={<Tolerance />} /> 
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

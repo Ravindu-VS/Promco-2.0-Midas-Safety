@@ -20,16 +20,33 @@ const Sidebar = () => {
   const [user, setUser] = useState({ name: "", email: "", role: "" }); // Add role to user state
   const location = useLocation(); // Get current location
 
+  // List of paths under "Master Data" to keep the menu open
+  const masterDataPaths = [
+    "/machine",
+    "/machine-type",
+    "/main-section",
+    "/parameter",
+    "/parameter-qualified-value",
+    "/section-template",
+    "/sub-section",
+    "/tolerance",
+  ];
+
   // Fetch user data from localStorage when component mounts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser)); // Set user data from localStorage
     }
-  }, []);
+
+    // Automatically open Master Data if the current location is under any Master Data paths
+    if (masterDataPaths.includes(location.pathname)) {
+      setMasterDataOpen(true);
+    }
+  }, [location.pathname]); // Depend on location.pathname to track path changes
 
   const handleMasterDataClick = () => {
-    setMasterDataOpen(!masterDataOpen);
+    setMasterDataOpen((prev) => !prev); // Toggle collapse manually
   };
 
   // Generate initials from the user's name
@@ -101,133 +118,24 @@ const Sidebar = () => {
         {/* Collapsible Links */}
         <Collapse in={masterDataOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItem
-              button
-              component={Link}
-              to="/machine"
-              className={
-                location.pathname === "/machine"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Machine" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/machine-type"
-              className={
-                location.pathname === "/machine-type"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Machine Type" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/main-section"
-              className={
-                location.pathname === "/main-section"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Main Section" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/parameter"
-              className={
-                location.pathname === "/parameter"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Parameter" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/parameter-qualified-value"
-              className={
-                location.pathname === "/parameter-qualified-value"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Parameter Qualified Value" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/section-template"
-              className={
-                location.pathname === "/section-template"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Section Template" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/sub-section"
-              className={
-                location.pathname === "/sub-section"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Sub Section" />
-            </ListItem>
-
-            <ListItem
-              button
-              component={Link}
-              to="/tolerance"
-              className={
-                location.pathname === "/tolerance"
-                  ? "nested-link active"
-                  : "nested-link"
-              }
-            >
-              <ListItemIcon>
-                <BuildIcon className="icon" />
-              </ListItemIcon>
-              <ListItemText primary="Tolerance" />
-            </ListItem>
+            {masterDataPaths.map((path, index) => (
+              <ListItem
+                key={index}
+                button
+                component={Link}
+                to={path}
+                className={
+                  location.pathname === path
+                    ? "nested-link active"
+                    : "nested-link"
+                }
+              >
+                <ListItemIcon>
+                  <BuildIcon className="subsection-icon" />
+                </ListItemIcon>
+                <ListItemText primary={path.replace("/", "").replace("-", " ")} />
+              </ListItem>
+            ))}
           </List>
         </Collapse>
       </List>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TextField, Button } from "@mui/material";
-import './MainSectionTable.css'; // Import the CSS file
+import './Table.css'; // Import the CSS file
 
 const MainSectionTable = () => {
   const [sections, setSections] = useState([]); // State to store section data

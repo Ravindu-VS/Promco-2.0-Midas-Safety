@@ -11,7 +11,7 @@ import {
   TextField,
   Button
 } from "@mui/material";
-import "./ParameterQualityTable.css"; // Import the CSS file for custom styles
+import "./Table.css"; // Import the CSS file for custom styles
 
 const ParameterQualityTable = () => {
   const [parameters, setParameters] = useState([]); // State to store parameter quality data

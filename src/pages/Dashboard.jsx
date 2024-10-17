@@ -26,9 +26,6 @@ const Dashboard = () => {
       <div className="dashboard-content">
         {/* Welcome Section with Background Image */}
         <div className="welcome-section">
-          <h1 className="welcome-text">
-            Welcome to PROMCO 2.0
-          </h1>
         </div>
 
         {/* Dashboard Flex Section */}

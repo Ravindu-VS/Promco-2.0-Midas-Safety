@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TextField, Button } from "@mui/material";
+import './Table.css';
 
 const ToleranceTable = () => {
   const [tolerances, setTolerances] = useState([]); // State to store tolerance data

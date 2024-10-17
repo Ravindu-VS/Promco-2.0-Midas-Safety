@@ -1,42 +1,37 @@
-/* General Styling */
 h1 {
-  color: white;
+  color: rgb(0, 0, 0);
   margin-bottom: 20px;
 }
 
-/* Add User Button Styling */
 .add-button {
-  background-color: darkred !important;
+  background-color: #be171d !important;
   color: white !important;
   margin-bottom: 20px;
 }
 
 .add-button:hover {
-  background-color: #A40000 !important;
+  background-color: #be171d !important;
 }
 
-/* Table Container Styling */
 .table-container {
   background-color: #121212;
 }
 
-/* Table Header Cell Styling */
 .table-header-cell {
-  background-color: darkred;
+  background-color: #be171d;
   color: white;
   font-weight: bold;
 }
 
-/* Table Cell Styling */
 .table-cell {
   color: white;
 }
 
-.table-cell, .table-header-cell {
+.table-cell,
+.table-header-cell {
   border-bottom: 1px solid #444;
 }
 
-/* Dialog Titles and Content Styling */
 .dialog-title {
   color: white;
 }
@@ -46,7 +41,6 @@ h1 {
   color: white;
 }
 
-/* Input Fields in Dialog */
 .dialog-input .MuiInputBase-root {
   color: white;
 }
@@ -56,14 +50,13 @@ h1 {
 }
 
 .dialog-input .MuiInputBase-root:after {
-  border-bottom-color: darkred;
+  border-bottom-color: #be171d;
 }
 
 .dialog-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
-  border-bottom-color: darkred;
+  border-bottom-color: #be171d;
 }
 
-/* Cancel Button Styling */
 .cancel-button {
   color: white;
   border: 1px solid white;
@@ -73,63 +66,61 @@ h1 {
   background-color: #444;
 }
 
-/* Save Button Styling */
 .save-button {
-  background-color: darkred;
+  background-color: #be171d;
   color: white;
 }
 
 .save-button:hover {
-  background-color: #A40000;
+  background-color: #be171d;
 }
 
-/* Icon Button Styling */
+/* Icon buttons */
 .MuiIconButton-root {
   color: white;
 }
 
 .MuiIconButton-root:hover {
-  color: #A40000;
+  color: #be171d;
 }
 
-/* Action Icons Styling */
 .action-icon {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .action-icon:hover {
-  color: #A40000;
+  color: #be171d;
 }
 
-/* Dialog Background and Styling */
+/* Dialog styles */
 .MuiDialog-paper {
   background-color: #1E1E1E !important;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
-/* Focused Label Color */
+/* Styles for the focused label */
 .MuiFormLabel-root.Mui-focused {
-  color: darkred !important;
+  color: #be171d !important;
 }
 
-/* Customize Select Field Icon Color */
+/* Customize select field icon color */
 .MuiSelect-icon {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
-/* Password Input Field Styling */
+/* Password input styling */
 .dialog-password-input .MuiInputBase-root {
-  color: white;
+  color: white; /* White text in password input */
 }
 
 .dialog-password-input .MuiInputLabel-root {
-  color: #bbb;
+  color: #bbb; /* Grey label */
 }
 
 .dialog-password-input .MuiInputBase-root:after {
-  border-bottom-color: darkred;
+  border-bottom-color: #be171d; /* Dark red underline for password */
 }
 
 .dialog-password-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
-  border-bottom-color: darkred;
+  border-bottom-color: #be171d; /* Dark red underline on hover */
 }

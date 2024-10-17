@@ -84,7 +84,7 @@ function Login() {
       {/* Logo section */}
       <a href="https://www.midassafety.com/" target="_blank" rel="noopener noreferrer" className="logo-link">
       <img
-          src={`${process.env.PUBLIC_URL}/Logo.png`}
+          src={`${process.env.PUBLIC_URL}/MIDAS-Logo12.png`}
           alt="Logo"
           className="logo"
         />

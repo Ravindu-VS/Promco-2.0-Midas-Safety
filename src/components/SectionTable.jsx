@@ -11,7 +11,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import './SectionTable.css'; // Adjust the path if necessary
+import './Table.css'; // Adjust the path if necessary
 
 
 const SectionTable = () => {
