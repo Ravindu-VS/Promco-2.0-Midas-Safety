@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import React, { useState, useEffect } from "react";
+import { IconButton, Menu, MenuItem, Badge, Avatar } from "@mui/material";
+import { Notifications as NotificationsIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import '../components/Topbar.css'; // Import the CSS file
+import '../components/Topbar.css';
 
 const Topbar = ({ show }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+  const [notifications, setNotifications] = useState([
+    "New message from admin",
+    "System maintenance scheduled",
+    "Task completed successfully"
+  ]);
+  const [user, setUser] = useState({ name: "", profilePicture: "" });
   const navigate = useNavigate();
 
-  // Sample user data
-  const user = {
-    name: 'John Doe',
-    address: '123 Main St, Anytown',
-    telephone: '+1 234 567 890',
-    username: 'johndoe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
+  useEffect(() => {
+    // Load user data from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const getInitials = (name) => {
+    const initials = name.split(' ')
+      .map((word) => word[0].toUpperCase())
+      .join('');
+    return initials;
   };
 
   const handleProfileMenuOpen = (event) => {
@@ -26,24 +38,37 @@ const Topbar = ({ show }) => {
     setAnchorEl(null);
   };
 
+  const handleNotificationClick = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
+  const handleNotificationClose = () => {
+    setNotificationAnchorEl(null);
+  };
+
   const handleProfileClick = () => {
-    navigate('/profile'); // Navigate to profile page
+    navigate('/profile');
     handleMenuClose();
   };
 
   const handleSettingsClick = () => {
-    navigate('/settings'); // Navigate to settings page
+    navigate('/settings');
     handleMenuClose();
   };
 
   const handleLogoutClick = () => {
-    // Perform logout logic here (e.g., clearing tokens)
+    localStorage.removeItem("user"); // Clear user data
     navigate('/'); // Redirect to login page
   };
 
-  const isMenuOpen = Boolean(anchorEl);
+  const handleNotificationViewed = (index) => {
+    setNotifications(prevNotifications => prevNotifications.filter((_, i) => i !== index));
+    handleNotificationClose();
+  };
 
-  // Render null if show is false
+  const isMenuOpen = Boolean(anchorEl);
+  const isNotificationOpen = Boolean(notificationAnchorEl);
+
   if (!show) return null;
 
   return (
@@ -59,17 +84,35 @@ const Topbar = ({ show }) => {
         </a>
       </div>
 
-      {/* Right - Account Icon */}
+      {/* Right - Profile Picture and Notification Icon */}
       <div className="topbar-right">
+        {/* Notification Icon */}
+        <IconButton onClick={handleNotificationClick}>
+          <Badge badgeContent={notifications.length} color="error">
+            <NotificationsIcon className="notification-icon" />
+          </Badge>
+        </IconButton>
+
+        {/* Profile Picture or Initials */}
         <IconButton onClick={handleProfileMenuOpen}>
-          <AccountCircleIcon className="account-icon" />
+          {user.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              className="profile-picture"
+            />
+          ) : (
+            <Avatar className="profile-avatar">
+              {getInitials(user.name || "User")}
+            </Avatar>
+          )}
         </IconButton>
       </div>
 
       {/* Profile Dropdown Menu */}
       <Menu
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        open={isMenuOpen}
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: "top",
@@ -81,8 +124,33 @@ const Topbar = ({ show }) => {
         }}
       >
         <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
-        <MenuItem onClick={handleSettingsClick}>Settings</MenuItem> {/* Updated here */}
+        <MenuItem onClick={handleSettingsClick}>Settings</MenuItem>
         <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+      </Menu>
+
+      {/* Notification Dropdown Menu */}
+      <Menu
+        anchorEl={notificationAnchorEl}
+        open={isNotificationOpen}
+        onClose={handleNotificationClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        {notifications.length > 0 ? (
+          notifications.map((notification, index) => (
+            <MenuItem key={index} onClick={() => handleNotificationViewed(index)}>
+              {notification}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem>No new notifications</MenuItem>
+        )}
       </Menu>
     </div>
   );

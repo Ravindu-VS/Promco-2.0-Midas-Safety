@@ -20,99 +20,133 @@ import {
   FormControl,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import './UserManage.css'; // Import the CSS file for styling
+import './UserManage.css';
 
 const UserManage = () => {
-  const [users, setUsers] = useState([]);
+  const [userList, setUserList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState({
     id: '',
-    name: '',
+    username: '',
     email: '',
     role: '',
-    password: '', // Add password to user state
+    password: '',
+    profilePicture: '',
   });
 
   useEffect(() => {
-    // Fetch initial user data (mocked for demonstration)
-    const initialUsers = [
-      { id: '1', name: 'John Doe', email: 'john@example.com', role: 'manager', password: '1234' },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'operator', password: '5678' },
-    ];
-    setUsers(initialUsers);
+    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+    if (storedUsers.length === 0) {
+      const exampleUsers = [
+        { id: '1', username: 'admin', email: 'admin@example.com', role: 'admin', password: 'admin123', profilePicture: 'https://via.placeholder.com/50' },
+        { id: '2', username: 'manager', email: 'manager@example.com', role: 'manager', password: 'manager123', profilePicture: 'https://via.placeholder.com/50' },
+        { id: '3', username: 'operator', email: 'operator@example.com', role: 'operator', password: 'operator123', profilePicture: 'https://via.placeholder.com/50' },
+        { id: '4', username: 'user', email: 'user@example.com', role: 'user', password: 'user123', profilePicture: 'https://via.placeholder.com/50' },
+      ];
+      localStorage.setItem('users', JSON.stringify(exampleUsers));
+      setUserList(exampleUsers);
+    } else {
+      setUserList(storedUsers);
+    }
   }, []);
 
-  // Handle adding a new user
+  const saveUsersToLocalStorage = (users) => {
+    localStorage.setItem('users', JSON.stringify(users));
+  };
+
   const handleAddUser = () => {
-    if (currentUser.name && currentUser.email && currentUser.role && currentUser.password) {
-      setUsers([...users, { ...currentUser, id: Date.now().toString() }]);
+    if (currentUser.username && currentUser.email && currentUser.role && currentUser.password) {
+      const newUser = { ...currentUser, id: Date.now().toString() };
+      const updatedUserList = [...userList, newUser];
+      setUserList(updatedUserList);
+      saveUsersToLocalStorage(updatedUserList);
       setOpenAddDialog(false);
-      setCurrentUser({ id: '', name: '', email: '', role: '', password: '' });
+      setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
     }
   };
 
-  // Handle editing an existing user
   const handleEditUser = () => {
-    setUsers(
-      users.map((user) => (user.id === currentUser.id ? currentUser : user))
-    );
+    const updatedUserList = userList.map((user) => (user.id === currentUser.id ? currentUser : user));
+    setUserList(updatedUserList);
+    saveUsersToLocalStorage(updatedUserList);
     setOpenEditDialog(false);
-    setCurrentUser({ id: '', name: '', email: '', role: '', password: '' });
+    setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
   };
 
-  // Handle deleting a user
   const handleDeleteUser = (id) => {
-    setUsers(users.filter((user) => user.id !== id));
+    const updatedUserList = userList.filter((user) => user.id !== id);
+    setUserList(updatedUserList);
+    saveUsersToLocalStorage(updatedUserList);
   };
 
-  // Open dialog to add a new user
   const openAddUserDialog = () => {
-    setCurrentUser({ id: '', name: '', email: '', role: '', password: '' });
+    setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
     setOpenAddDialog(true);
   };
 
-  // Open dialog to edit an existing user
   const openEditUserDialog = (user) => {
     setCurrentUser(user);
     setOpenEditDialog(true);
   };
 
+  const filteredUsers = userList.filter((user) =>
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="user-manage-container">
       <h1>User Management</h1>
-      <Button variant="contained" className="add-button" onClick={openAddUserDialog}>
-        Add User
-      </Button>
+      <div className="toolbar">
+        <TextField
+          label="Search Users"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-bar"
+        />
+        <Button variant="contained" className="add-button" onClick={openAddUserDialog}>
+          Add User
+        </Button>
+      </div>
       <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className="table-header-cell">Name</TableCell>
+              <TableCell className="table-header-cell">Profile Picture</TableCell>
+              <TableCell className="table-header-cell">Username</TableCell>
               <TableCell className="table-header-cell">Email</TableCell>
               <TableCell className="table-header-cell">Role</TableCell>
-              <TableCell className="table-header-cell">Password</TableCell> {/* Show Password */}
               <TableCell className="table-header-cell">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <TableRow key={user.id}>
-                <TableCell className="table-cell">{user.name}</TableCell>
+                <TableCell className="table-cell">
+                  {user.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt={`${user.username}'s profile`}
+                      className="profile-picture"
+                    />
+                  ) : (
+                    <div className="profile-initials">
+                      {user.username.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell className="table-cell">{user.username}</TableCell>
                 <TableCell className="table-cell">{user.email}</TableCell>
                 <TableCell className="table-cell">{user.role}</TableCell>
-                <TableCell className="table-cell">{user.password}</TableCell> {/* Show Password */}
                 <TableCell className="table-cell">
-                  <IconButton
-                    color="primary"
-                    onClick={() => openEditUserDialog(user)}
-                  >
+                  <IconButton color="primary" onClick={() => openEditUserDialog(user)}>
                     <EditIcon className="action-icon" />
                   </IconButton>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => handleDeleteUser(user.id)}
-                  >
+                  <IconButton color="secondary" onClick={() => handleDeleteUser(user.id)}>
                     <DeleteIcon className="action-icon" />
                   </IconButton>
                 </TableCell>
@@ -127,20 +161,16 @@ const UserManage = () => {
         <DialogTitle className="dialog-title">Add User</DialogTitle>
         <DialogContent className="dialog-content">
           <TextField
-            label="Name"
-            value={currentUser.name}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, name: e.target.value })
-            }
+            label="Username"
+            value={currentUser.username}
+            onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
             fullWidth
             className="dialog-input"
           />
           <TextField
             label="Email"
             value={currentUser.email}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, email: e.target.value })
-            }
+            onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
           />
@@ -148,9 +178,7 @@ const UserManage = () => {
             <InputLabel>Role</InputLabel>
             <Select
               value={currentUser.role}
-              onChange={(e) =>
-                setCurrentUser({ ...currentUser, role: e.target.value })
-              }
+              onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })}
             >
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="manager">Manager</MenuItem>
@@ -158,23 +186,24 @@ const UserManage = () => {
               <MenuItem value="user">User</MenuItem>
             </Select>
           </FormControl>
-          {/* Password Field */}
           <TextField
             label="Password"
             type="password"
             value={currentUser.password}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, password: e.target.value })
-            }
+            onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })}
+            fullWidth
+            className="dialog-input"
+          />
+          <TextField
+            label="Profile Picture URL"
+            value={currentUser.profilePicture}
+            onChange={(e) => setCurrentUser({ ...currentUser, profilePicture: e.target.value })}
             fullWidth
             className="dialog-input"
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setOpenAddDialog(false)}
-            className="cancel-button"
-          >
+          <Button onClick={() => setOpenAddDialog(false)} className="cancel-button">
             Cancel
           </Button>
           <Button onClick={handleAddUser} className="save-button">
@@ -188,20 +217,16 @@ const UserManage = () => {
         <DialogTitle className="dialog-title">Edit User</DialogTitle>
         <DialogContent className="dialog-content">
           <TextField
-            label="Name"
-            value={currentUser.name}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, name: e.target.value })
-            }
+            label="Username"
+            value={currentUser.username}
+            onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
             fullWidth
             className="dialog-input"
           />
           <TextField
             label="Email"
             value={currentUser.email}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, email: e.target.value })
-            }
+            onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
           />
@@ -209,9 +234,7 @@ const UserManage = () => {
             <InputLabel>Role</InputLabel>
             <Select
               value={currentUser.role}
-              onChange={(e) =>
-                setCurrentUser({ ...currentUser, role: e.target.value })
-              }
+              onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })}
             >
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="manager">Manager</MenuItem>
@@ -219,23 +242,24 @@ const UserManage = () => {
               <MenuItem value="user">User</MenuItem>
             </Select>
           </FormControl>
-          {/* Password Field */}
           <TextField
             label="Password"
             type="password"
             value={currentUser.password}
-            onChange={(e) =>
-              setCurrentUser({ ...currentUser, password: e.target.value })
-            }
+            onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })}
+            fullWidth
+            className="dialog-input"
+          />
+          <TextField
+            label="Profile Picture URL"
+            value={currentUser.profilePicture}
+            onChange={(e) => setCurrentUser({ ...currentUser, profilePicture: e.target.value })}
             fullWidth
             className="dialog-input"
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setOpenEditDialog(false)}
-            className="cancel-button"
-          >
+          <Button onClick={() => setOpenEditDialog(false)} className="cancel-button">
             Cancel
           </Button>
           <Button onClick={handleEditUser} className="save-button">

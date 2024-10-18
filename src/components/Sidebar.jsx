@@ -12,15 +12,14 @@ import BuildIcon from "@mui/icons-material/Build";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GroupIcon from "@mui/icons-material/Group";
-import ListAltIcon from "@mui/icons-material/ListAlt"; // Master data icon
-import "./Sidebar.css"; // Import the CSS file
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import "./Sidebar.css";
 
 const Sidebar = () => {
-  const [masterDataOpen, setMasterDataOpen] = useState(false); // State to manage collapse
-  const [user, setUser] = useState({ name: "", email: "", role: "" }); // Add role to user state
-  const location = useLocation(); // Get current location
+  const [masterDataOpen, setMasterDataOpen] = useState(false);
+  const [user, setUser] = useState({ name: "", email: "", role: "", profilePicture: "" });
+  const location = useLocation();
 
-  // List of paths under "Master Data" to keep the menu open
   const masterDataPaths = [
     "/machine",
     "/machine-type",
@@ -32,24 +31,24 @@ const Sidebar = () => {
     "/tolerance",
   ];
 
-  // Fetch user data from localStorage when component mounts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Set user data from localStorage
+      setUser(JSON.parse(storedUser));
     }
-
-    // Automatically open Master Data if the current location is under any Master Data paths
-    if (masterDataPaths.includes(location.pathname)) {
-      setMasterDataOpen(true);
-    }
-  }, [location.pathname]); // Depend on location.pathname to track path changes
+    setMasterDataOpen(masterDataPaths.includes(location.pathname));
+  }, [location.pathname]);
 
   const handleMasterDataClick = () => {
-    setMasterDataOpen((prev) => !prev); // Toggle collapse manually
+    setMasterDataOpen((prev) => !prev);
   };
 
-  // Generate initials from the user's name
+  const getFirstName = (name) => {
+    if (!name) return "User";
+    const nameParts = name.split(" ");
+    return nameParts[0];
+  };
+
   const generateInitials = (name) => {
     const nameParts = name.split(" ");
     const initials = nameParts.map((part) => part[0]).join("").toUpperCase();
@@ -60,13 +59,17 @@ const Sidebar = () => {
     <div className="sidebar">
       {/* User Info Section */}
       <div className="user-info">
-        {/* Profile Icon with Initials */}
         <div className="profile-icon">
-          {generateInitials(user.name || "User Name")}
+          {user.profilePicture ? (
+            <img src={user.profilePicture} alt="Profile" className="profile-picture" />
+          ) : (
+            <div className="initials-icon">
+              {generateInitials(user.name || "User Name")}
+            </div>
+          )}
         </div>
         <div>
-          {/* Display User Name, Email, and Role */}
-          <p className="user-name">{user.name || "User Name"}</p>
+          <p className="welcome-text">Welcome, {getFirstName(user.name)}</p>
           <p className="user-email">{user.email || "Email"}</p>
           <p className="user-role">{user.role || "Role"}</p>
         </div>
@@ -74,12 +77,11 @@ const Sidebar = () => {
 
       {/* Sidebar Links */}
       <List className="sidebar-links">
-        {/* Home Link */}
         <ListItem
           button
           component={Link}
           to="/dashboard"
-          selected={location.pathname === "/dashboard"}
+          className={location.pathname === "/dashboard" ? "active" : ""}
         >
           <ListItemIcon>
             <HomeIcon className="icon" />
@@ -87,13 +89,12 @@ const Sidebar = () => {
           <ListItemText primary="Home" />
         </ListItem>
 
-        {/* Conditionally Render User Manage Link for Admins */}
         {user.role === "admin" && (
           <ListItem
             button
             component={Link}
             to="/UserManage"
-            selected={location.pathname === "/UserManage"}
+            className={location.pathname === "/UserManage" ? "active" : ""}
           >
             <ListItemIcon>
               <GroupIcon className="icon" />
@@ -102,7 +103,6 @@ const Sidebar = () => {
           </ListItem>
         )}
 
-        {/* Collapsible Master Data Section */}
         <ListItem button onClick={handleMasterDataClick}>
           <ListItemIcon>
             <ListAltIcon className="icon" />
@@ -115,7 +115,6 @@ const Sidebar = () => {
           )}
         </ListItem>
 
-        {/* Collapsible Links */}
         <Collapse in={masterDataOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {masterDataPaths.map((path, index) => (

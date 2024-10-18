@@ -1,0 +1,129 @@
+
+  /* Main content area */
+  .content {
+    flex: 1;
+    padding: 20px;
+    background-color: white; /* White background for content */
+    color: black; /* Black text for contrast */
+  }
+  
+  /* Profile card styling */
+  .profile-card {
+    background-color: white; /* White background for profile card */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Slight shadow for depth */
+  }
+  
+  /* Profile header section */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  /* Profile picture section */
+  .profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid black; /* Black border for the profile picture */
+    margin-bottom: 10px;
+  }
+  
+  .upload-label {
+    font-size: 14px;
+    color: #be171d; /* Red color for upload label */
+    cursor: pointer;
+  }
+  
+  .upload-input {
+    display: none; /* Hidden file input */
+  }
+  
+  /* Profile name section */
+  .profile-name-section h3 {
+    color: black; /* Black text for name */
+    margin-top: 0;
+  }
+  
+  /* Profile form table */
+  .profile-form table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  
+  /* Table cells styling */
+  .profile-form td {
+    padding: 10px 5px;
+    color: black; /* Black text */
+    font-weight: bold;
+  }
+  
+  .profile-form input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid black; /* Black underline */
+    background-color: transparent;
+    color: black; /* Black text */
+    font-size: 14px;
+  }
+  
+  .profile-form input:focus {
+    outline: none;
+    border-bottom-color: #be171d; /* Red border on focus */
+  }
+  
+  /* Edit icon styling */
+  .edit-icon {
+    cursor: pointer;
+    color: #be171d; /* Red for edit icons */
+  }
+  
+  .edit-icon.disabled {
+    color: #555; /* Grey for disabled icons */
+    cursor: not-allowed;
+  }
+  
+  /* Save button */
+  .save-button {
+    background-color: #be171d; /* Red background */
+    color: white; /* White text */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  
+  .save-button:hover {
+    background-color: #a31416; /* Darker red on hover */
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .profile-container {
+      flex-direction: column;
+    }
+  
+    .profile-picture {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .save-button {
+      width: 100%;
+    }
+  }
+  

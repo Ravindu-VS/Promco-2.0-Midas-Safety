@@ -37,32 +37,33 @@ html, body {
 
 /* Cards Styling */
 .dashboard-card {
-  background-color: #ffffff; /* Softer red for card background */
+  background-color: #f7f7f7; /* Lighter background for cards */
   border-radius: 12px;
   padding: 2rem;
   width: calc(34% - 1rem); /* Fit 3 cards per row */
   min-width: 250px; /* Prevent card from shrinking too much */
-  color: #ffffff; /* White text on cards */
+  color: #333333; /* Dark text on cards */
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Include shadow transition */
 }
 
 .dashboard-card:hover {
   transform: scale(1.05); /* Slight zoom effect on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
 }
 
 /* Welcome Section */
 .welcome-section {
-  width: 110%;
+  width: 1650px;
   height: 250px;
   background-image: url('/public/welcome.png'); /* Relative to public folder */
-  background-size:77%; /* Adjust image size */
+  background-size: 77%; /* Adjust image size */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Prevent the image from repeating */
   border-radius: 10px;
   margin-bottom: 2rem;
-  display: flex;
+  display: fixed;
   align-items: center;
   justify-content: center;
   color: #ffffff;
@@ -73,7 +74,7 @@ html, body {
 .card-title {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #ffffff; /* White text for dark red cards */
+  color: #333333; /* Darker text for better readability */
   margin-bottom: 1rem;
 }
 
@@ -84,6 +85,35 @@ html, body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   padding: 20px;
+}
+
+/* Contact Admin Card Styling */
+.contact-admin-card {
+  background-color: #e0f7fa; /* Light cyan background for contact card */
+  border: 1px solid #b2ebf2; /* Slightly darker border */
+}
+
+.contact-admin-card textarea {
+  border-radius: 8px;
+  border: 1px solid #ccc; /* Gray border for the textarea */
+  padding: 10px; /* Padding inside the textarea */
+  width: 100%;
+  resize: none; /* Prevent resizing */
+}
+
+/* Button Styling */
+.contact-admin-card button {
+  background-color: #008CBA; /* Blue background */
+  color: white; /* White text */
+  padding: 10px 15px; /* Button padding */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+.contact-admin-card button:hover {
+  background-color: #005f7f; /* Darker blue on hover */
 }
 
 /* Responsive Adjustments */

@@ -16,19 +16,23 @@ import Tolerance from './pages/Tolerance';
 import UserManage from './pages/UserManage';
 import Profile from './components/Profile';
 import Settings from "./components/Settings";
+import React, { useState } from "react";
 
 // Sample user data
-const user = {
-  name: 'John Doe',
-  address: '123 Main St, Anytown',
-  telephone: '+1 234 567 890',
-  username: 'johndoe',
-  email: 'john.doe@example.com',
-  role: 'Admin',
-  profilePicture: '', // Add a default or placeholder image URL if available
-  joinedDate: new Date(),
-  phone: '+1 234 567 890',
-};
+const initialUserList = [
+  {
+    name: 'John Doe',
+    address: '123 Main St, Anytown',
+    telephone: '+1 234 567 890',
+    username: 'johndoe',
+    email: 'john.doe@example.com',
+    role: 'Admin',
+    profilePicture: '', // Add a default or placeholder image URL if available
+    joinedDate: new Date(),
+    phone: '+1 234 567 890',
+  },
+];
+
 
 // Dashboard Layout Component (Topbar + Sidebar + Content)
 const DashboardLayout = () => (
@@ -42,20 +46,22 @@ const DashboardLayout = () => (
 );
 
 function App() {
+  const [users, setUsers] = useState(initialUserList);
+
   return (
     <div>
       <ThemeToggleButton /> {/* This ensures the button is visible on all pages, including Login */}
       
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Login />} /> {/* Login page - no topbar/sidebar */}
+        <Route path="/" element={<Login users={users} />} /> {/* Pass user data to Login */}
         
         {/* Dashboard Routes */}
         <Route element={<DashboardLayout />}> {/* Layout wrapping all dashboard routes */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile user={user} />} /> {/* Pass user data to Profile */}
+          <Route path="/profile" element={<Profile user={users[0]} />} /> {/* Pass first user data to Profile */}
           <Route path="/settings" element={<Settings />} />
-          <Route path="/UserManage" element={<UserManage />} />
+          <Route path="/UserManage" element={<UserManage users={users} setUsers={setUsers} />} /> {/* Pass user data to UserManage */}
           <Route path="/masterData" element={<MasterData />} />
           <Route path="/machine" element={<Machine />} />
           <Route path="/machine-type" element={<MachineType />} />

@@ -22,11 +22,11 @@
 
 /* User info section */
 .user-info {
-  padding: 1.5rem;
+  padding: 1.7rem;
   display: flex;
   align-items: center;
-  background-color: #bbb;
-  border-bottom: 1px solid #444;
+  background-color: #ffffff;
+  border-bottom: 1px solid #000000;
 }
 
 /* Profile icon */
@@ -44,24 +44,32 @@
   margin-right: 1rem;
 }
 
-/* User info text */
-.user-name {
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: #000;
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
+
+/* Welcome text */
+.welcome-text {
+  font-size: 1.29rem;
+  font-weight: bold;
+  color: #be171d;
+}
+
 .user-email,
 .user-role {
-  color: #4f0303;
-  font-size: 0.875rem;
+  color: #000000;
+  font-size: 0.9rem;
 }
 
 /* Sidebar links */
 .sidebar-links {
-  margin-top: 0px;
+  margin-top: 1px; /* Set the gap between user info and first link to 1px */
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 1px;
   color: #000;
 }
 

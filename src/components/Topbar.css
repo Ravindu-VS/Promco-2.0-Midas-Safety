@@ -9,7 +9,7 @@
   align-items: center;
   padding: 0 30px;
   height: 65px;
-  background-color: #ffffff; /* Slightly lighter dark red */
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 70;
 }
@@ -21,40 +21,50 @@
 .topbar-right {
   display: flex;
   align-items: center;
-  position: relative; /* Allow icon to be positioned correctly */
-  right: 60px;
+  position: relative;
+  right: 43px; /* Adjusted right padding for alignment */
 }
 
-.account-icon {
+/* Profile picture size */
+.profile-picture {
+  width: 35px; /* Reduced width */
+  height: 35px; /* Reduced height */
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  margin-left: 25px; /* Increased space between notification icon and profile */
+}
+
+/* Adjusted notification icon */
+.notification-icon {
   color: #000000;
-  font-size: 4rem; /* Increased font size for the account icon */
+  font-size: 2rem; /* Font size for notification icon */
   cursor: pointer;
+  position: relative; /* Position relative to handle notification count positioning */
 }
 
-/* Dropdown Menu */
-.menu-item {
+/* Notification badge close to the icon */
+.notification-count {
+  background-color: #be171d; /* Dark red for notification count */
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
   position: absolute;
-  top: 60px; /* Below topbar */
-  right: 20px;
-  background-color: #444444; /* Dark grey menu background */
-  border: 1px solid white;
-  border-radius: 5px;
-  z-index: 100;
+  top: -8px; /* Adjusted positioning to get closer to the notification icon */
+  right: -8px; /* Closer to the icon */
 }
 
-.menu-item ul {
-  list-style-type: none;
-  padding: 10px;
-  margin: 0;
-}
-
-.menu-item ul li {
-  padding: 10px;
-  color: white; /* White text for menu items */
+/* Avatar styling for initials when no profile picture */
+.profile-avatar {
+  width: 35px; /* Same size as profile picture */
+  height: 35px;
+  font-size: 1.1rem; /* Adjust font size for initials */
+  background-color: #be171d; /* Dark red background */
+  color: white;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.menu-item ul li:hover {
-  background-color: #be171d; /* Dark red hover effect */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

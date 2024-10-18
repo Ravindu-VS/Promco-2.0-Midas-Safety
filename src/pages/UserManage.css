@@ -124,3 +124,70 @@ h1 {
 .dialog-password-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
   border-bottom-color: #be171d; /* Dark red underline on hover */
 }
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.profile-initials {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #000000; /* Example color */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+} 
+
+/* Search Bar Styles */
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar .MuiInputBase-root {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  border: 1px solid #444;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.search-bar .MuiInputBase-root:focus-within {
+  border-color: #be171d; /* Focused border color */
+}
+
+.search-bar .MuiInputLabel-root {
+  color: #bbb;
+}
+
+.search-bar .MuiInputBase-root:hover:not(.Mui-disabled):before {
+  border-bottom-color: #be171d;
+}
+
+.search-bar .MuiInputBase-input {
+  color: rgb(0, 0, 0);
+}
+
+.search-bar .MuiInputLabel-root.Mui-focused {
+  color: #be171d !important;
+}
+
+.search-icon {
+  color: #be171d;
+  padding-right: 8px;
+  vertical-align: middle;
+}
+
+.clear-icon {
+  color: #bbb;
+  cursor: pointer;
+}
+
+.clear-icon:hover {
+  color: #fff;
+}
