@@ -39,11 +39,51 @@ const UserManage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  // Load users from localStorage on component mount
   useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-    setUserList(storedUsers);
+    const storedUsers = JSON.parse(localStorage.getItem('users'));
+    if (storedUsers && storedUsers.length > 0) {
+      setUserList(storedUsers);
+    } else {
+      // Create sample users if no users are stored in localStorage
+      const sampleUsers = [
+        {
+          id: '1',
+          username: 'john_doe',
+          email: 'john.doe@example.com',
+          role: 'admin',
+          password: 'password123',
+          profilePicture: '',
+        },
+        {
+          id: '2',
+          username: 'jane_smith',
+          email: 'jane.smith@example.com',
+          role: 'manager',
+          password: 'password123',
+          profilePicture: '',
+        },
+        {
+          id: '3',
+          username: 'michael_jordan',
+          email: 'michael.jordan@example.com',
+          role: 'operator',
+          password: 'password123',
+          profilePicture: '',
+        },
+        {
+          id: '4',
+          username: 'emily_clark',
+          email: 'emily.clark@example.com',
+          role: 'user',
+          password: 'password123',
+          profilePicture: '',
+        },
+      ];
+      setUserList(sampleUsers);
+      saveUsersToLocalStorage(sampleUsers);
+    }
   }, []);
+  
 
   // Save updated user list to localStorage
   const saveUsersToLocalStorage = (users) => {

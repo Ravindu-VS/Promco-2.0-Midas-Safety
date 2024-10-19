@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -9,6 +9,52 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Sample users if no data is in localStorage
+  const sampleUsers = [
+    {
+      id: '1',
+      username: 'john_doe',
+      email: 'john.doe@example.com',
+      role: 'admin',
+      password: 'password123',
+    },
+    {
+      id: '2',
+      username: 'jane_smith',
+      email: 'jane.smith@example.com',
+      role: 'manager',
+      password: 'password123',
+    },
+    {
+      id: '3',
+      username: 'michael_jordan',
+      email: 'michael.jordan@example.com',
+      role: 'operator',
+      password: 'password123',
+    },
+    {
+      id: '4',
+      username: 'emily_clark',
+      email: 'emily.clark@example.com',
+      role: 'user',
+      password: 'password123',
+    },
+  ];
+
+  const [storedUsers, setStoredUsers] = useState([]);
+
+  useEffect(() => {
+    // Retrieve users stored in localStorage
+    const usersFromStorage = JSON.parse(localStorage.getItem('users'));
+
+    if (usersFromStorage && usersFromStorage.length > 0) {
+      setStoredUsers(usersFromStorage);
+    } else {
+      // Use sample users if no users are stored in localStorage
+      setStoredUsers(sampleUsers);
+    }
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -23,10 +69,8 @@ function Login() {
     }
   };
 
-  // Authenticate user from the localStorage users list
+  // Authenticate user from the stored users list (either from localStorage or sample data)
   const authenticateUser = (email, password) => {
-    // Retrieve users stored in localStorage from UserManage.jsx
-    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
     const user = storedUsers.find(
       (u) => u.email.toLowerCase().trim() === email.toLowerCase().trim() && u.password === password
     );
