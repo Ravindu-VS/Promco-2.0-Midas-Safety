@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import CalendarComponent from "../components/CalendarComponent";
-import MachineDataTable from "../components/MachineDataTable";
+import MachineDataTable from "../tables/MachineDataTable";
 import './Dashboard.css'; 
 
 const Dashboard = () => {
@@ -137,7 +137,7 @@ const Dashboard = () => {
           <div className="dashboard-card">
             <h3 className="card-title">Generated Report</h3>
             <p>{selectedDate ? reportData : "Select a date to generate the report."}</p>
-            <button onClick={handleGenerateReport} disabled={!selectedDate}>
+            <button className="red-button" onClick={handleGenerateReport} disabled={!selectedDate}>
               Generate Report
             </button>
           </div>

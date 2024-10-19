@@ -7,6 +7,7 @@ import { FaPencilAlt } from 'react-icons/fa'; // Import pencil icon
 const Profile = () => {
     // Initial user data from localStorage or default values
     const storedUser = JSON.parse(localStorage.getItem('user')) || {
+        id: '123456',  // Example User ID
         profilePicture: 'https://via.placeholder.com/150',
         username: 'JohnDoe',
         email: 'john.doe@example.com',
@@ -61,11 +62,11 @@ const Profile = () => {
     return (
         <div className="profile-container">
             {/* Sidebar */}
-            <Sidebar />
+            <Sidebar profilePicture={userData.profilePicture} /> {/* Pass profile picture to Sidebar */}
 
             <div className="content">
                 {/* Topbar */}
-                <Topbar />
+                <Topbar profilePicture={userData.profilePicture} /> {/* Pass profile picture to Topbar */}
 
                 {/* Main Content */}
                 <div className="main-content">
@@ -80,9 +81,10 @@ const Profile = () => {
                                     className="profile-picture"
                                 />
                                 <div className="upload-section">
-                                    <label className="upload-label">Change Picture</label>
+                                    <label className="upload-label" htmlFor="profile-picture">Change Picture</label>
                                     <input
                                         type="file"
+                                        id="profile-picture"  // Add id to the input
                                         accept="image/*"
                                         onChange={handleProfilePictureChange}
                                         className="upload-input"
@@ -92,6 +94,7 @@ const Profile = () => {
 
                             <div className="profile-name-section">
                                 <h3>{userData.username}</h3>
+                                <p>{userData.role}</p> {/* Display the role */}
                             </div>
                         </div>
 
@@ -99,6 +102,19 @@ const Profile = () => {
                         <div className="profile-form">
                             <table>
                                 <tbody>
+                                    <tr>
+                                        <td>User ID</td> {/* Added User ID Row */}
+                                        <td>
+                                            <input
+                                                type="text"
+                                                name="id"
+                                                value={userData.id}
+                                                readOnly
+                                                className="profile-input"
+                                            />
+                                        </td>
+                                        <td><FaPencilAlt className="edit-icon disabled" /></td>
+                                    </tr>
                                     <tr>
                                         <td>Username</td>
                                         <td>

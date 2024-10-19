@@ -19,10 +19,12 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import './UserManage.css';
 
 const UserManage = () => {
+  const navigate = useNavigate();
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -35,38 +37,34 @@ const UserManage = () => {
     password: '',
     profilePicture: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
 
+  // Load users from localStorage on component mount
   useEffect(() => {
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-    if (storedUsers.length === 0) {
-      const exampleUsers = [
-        { id: '1', username: 'admin', email: 'admin@example.com', role: 'admin', password: 'admin123', profilePicture: 'https://via.placeholder.com/50' },
-        { id: '2', username: 'manager', email: 'manager@example.com', role: 'manager', password: 'manager123', profilePicture: 'https://via.placeholder.com/50' },
-        { id: '3', username: 'operator', email: 'operator@example.com', role: 'operator', password: 'operator123', profilePicture: 'https://via.placeholder.com/50' },
-        { id: '4', username: 'user', email: 'user@example.com', role: 'user', password: 'user123', profilePicture: 'https://via.placeholder.com/50' },
-      ];
-      localStorage.setItem('users', JSON.stringify(exampleUsers));
-      setUserList(exampleUsers);
-    } else {
-      setUserList(storedUsers);
-    }
+    setUserList(storedUsers);
   }, []);
 
+  // Save updated user list to localStorage
   const saveUsersToLocalStorage = (users) => {
     localStorage.setItem('users', JSON.stringify(users));
   };
 
+  // Handle adding a new user
   const handleAddUser = () => {
-    if (currentUser.username && currentUser.email && currentUser.role && currentUser.password) {
-      const newUser = { ...currentUser, id: Date.now().toString() };
+    if (currentUser.id && currentUser.username && currentUser.email && currentUser.role && currentUser.password) {
+      const newUser = { ...currentUser };
       const updatedUserList = [...userList, newUser];
       setUserList(updatedUserList);
       saveUsersToLocalStorage(updatedUserList);
       setOpenAddDialog(false);
       setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
+    } else {
+      alert('Please fill in all fields');
     }
   };
 
+  // Handle editing an existing user
   const handleEditUser = () => {
     const updatedUserList = userList.map((user) => (user.id === currentUser.id ? currentUser : user));
     setUserList(updatedUserList);
@@ -75,31 +73,57 @@ const UserManage = () => {
     setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
   };
 
+  // Handle deleting a user
   const handleDeleteUser = (id) => {
     const updatedUserList = userList.filter((user) => user.id !== id);
     setUserList(updatedUserList);
     saveUsersToLocalStorage(updatedUserList);
   };
 
+  // Open dialog to add a new user
   const openAddUserDialog = () => {
     setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
     setOpenAddDialog(true);
   };
 
+  // Open dialog to edit an existing user
   const openEditUserDialog = (user) => {
     setCurrentUser(user);
     setOpenEditDialog(true);
   };
 
+  // Navigate to the profile page of a user
+  const handleViewProfile = (id) => {
+    navigate(`/profile/${id}`);
+  };
+
+  // Filter users based on search input
   const filteredUsers = userList.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Get initials from username
+  const getInitials = (name) => {
+    const initials = name.split(' ').map((word) => word[0]).join('');
+    return initials.toUpperCase();
+  };
+
+  // Handle image upload for user profile picture
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentUser({ ...currentUser, profilePicture: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="user-manage-container">
-      <h1>User Management</h1>
       <div className="toolbar">
         <TextField
           label="Search Users"
@@ -116,10 +140,17 @@ const UserManage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className="table-header-cell">Profile Picture</TableCell>
+              <TableCell className="table-header-cell">Profile</TableCell>
+              <TableCell className="table-header-cell">User ID</TableCell>
               <TableCell className="table-header-cell">Username</TableCell>
               <TableCell className="table-header-cell">Email</TableCell>
               <TableCell className="table-header-cell">Role</TableCell>
+              <TableCell className="table-header-cell">
+                Password
+                <IconButton onClick={() => setShowPassword((prev) => !prev)}>
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </TableCell>
               <TableCell className="table-header-cell">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -128,26 +159,29 @@ const UserManage = () => {
               <TableRow key={user.id}>
                 <TableCell className="table-cell">
                   {user.profilePicture ? (
-                    <img
-                      src={user.profilePicture}
-                      alt={`${user.username}'s profile`}
-                      className="profile-picture"
-                    />
+                    <img src={user.profilePicture} alt="Profile" className="profile-thumbnail" />
                   ) : (
                     <div className="profile-initials">
-                      {user.username.charAt(0).toUpperCase()}
+                      {getInitials(user.username)}
                     </div>
                   )}
                 </TableCell>
+                <TableCell className="table-cell">{user.id}</TableCell>
                 <TableCell className="table-cell">{user.username}</TableCell>
                 <TableCell className="table-cell">{user.email}</TableCell>
                 <TableCell className="table-cell">{user.role}</TableCell>
+                <TableCell className="table-cell">
+                  {showPassword ? user.password : '******'}
+                </TableCell>
                 <TableCell className="table-cell">
                   <IconButton color="primary" onClick={() => openEditUserDialog(user)}>
                     <EditIcon className="action-icon" />
                   </IconButton>
                   <IconButton color="secondary" onClick={() => handleDeleteUser(user.id)}>
                     <DeleteIcon className="action-icon" />
+                  </IconButton>
+                  <IconButton color="default" onClick={() => handleViewProfile(user.id)}>
+                    <Visibility className="action-icon" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -160,6 +194,13 @@ const UserManage = () => {
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle className="dialog-title">Add User</DialogTitle>
         <DialogContent className="dialog-content">
+          <TextField
+            label="User ID"
+            value={currentUser.id}
+            onChange={(e) => setCurrentUser({ ...currentUser, id: e.target.value })}
+            fullWidth
+            className="dialog-input"
+          />
           <TextField
             label="Username"
             value={currentUser.username}
@@ -194,11 +235,10 @@ const UserManage = () => {
             fullWidth
             className="dialog-input"
           />
-          <TextField
-            label="Profile Picture URL"
-            value={currentUser.profilePicture}
-            onChange={(e) => setCurrentUser({ ...currentUser, profilePicture: e.target.value })}
-            fullWidth
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             className="dialog-input"
           />
         </DialogContent>
@@ -217,6 +257,14 @@ const UserManage = () => {
         <DialogTitle className="dialog-title">Edit User</DialogTitle>
         <DialogContent className="dialog-content">
           <TextField
+            label="User ID"
+            value={currentUser.id}
+            onChange={(e) => setCurrentUser({ ...currentUser, id: e.target.value })}
+            fullWidth
+            className="dialog-input"
+            disabled
+          />
+          <TextField
             label="Username"
             value={currentUser.username}
             onChange={(e) => setCurrentUser({ ...currentUser, username: e.target.value })}
@@ -229,6 +277,7 @@ const UserManage = () => {
             onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
+            disabled
           />
           <FormControl fullWidth className="dialog-input">
             <InputLabel>Role</InputLabel>
@@ -247,13 +296,6 @@ const UserManage = () => {
             type="password"
             value={currentUser.password}
             onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })}
-            fullWidth
-            className="dialog-input"
-          />
-          <TextField
-            label="Profile Picture URL"
-            value={currentUser.profilePicture}
-            onChange={(e) => setCurrentUser({ ...currentUser, profilePicture: e.target.value })}
             fullWidth
             className="dialog-input"
           />

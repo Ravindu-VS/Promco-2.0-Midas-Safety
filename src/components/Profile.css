@@ -35,7 +35,7 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 3px solid black; /* Black border for the profile picture */
+    border: 2px solid black; /* Black border for the profile picture */
     margin-bottom: 10px;
   }
   
@@ -111,6 +111,27 @@
     background-color: #a31416; /* Darker red on hover */
   }
   
+  .profile-password-container {
+    position: relative; /* Position relative for positioning the icon */
+    width: 100%; /* Ensures the container takes full width */
+}
+
+.profile-input {
+    width: calc(100% - 30px); /* Adjust width to accommodate the icon */
+    padding-right: 30px; /* Add padding to the right to prevent text overlap with the icon */
+}
+
+.profile-password-container-password-toggle {
+    position: absolute; /* Position the icon absolutely */
+    right: 10px; /* Align to the right side */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust to align vertically */
+    cursor: pointer;
+    color: gray; /* Change color to match your theme */
+}
+
+
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .profile-container {

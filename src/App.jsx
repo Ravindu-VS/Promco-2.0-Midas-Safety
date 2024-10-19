@@ -1,38 +1,27 @@
 import { Routes, Route, Outlet } from "react-router-dom";
+import { useState } from "react"; // Ensure useState is imported
 import ThemeToggleButton from "./components/ThemeToggleButton";
+import Login from "./pages/Login";
 import Topbar from "./components/Topbar";
 import Sidebar from "./components/Sidebar";
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import MasterData from "./pages/MasterData";
-import Machine from './pages/Machine';
-import MachineType from './pages/MachineType';
-import MainSection from './pages/MainSection';
-import Parameter from './pages/Parameter';
-import ParameterQualifiedValue from './pages/ParameterQualifiedValue';
-import SectionTemplate from './pages/SectionTemplate';
-import SubSection from './pages/SubSection';
-import Tolerance from './pages/Tolerance';
+import MachineTable from './tables/MachineTable';
+import MachineTypeTable from './tables/MachineTypeTable';
+import MainSectionTable from './tables/MainSectionTable';
+import MaterialCodeTable from './tables/MaterialCodeTable';
+import ParameterTable from './tables/ParameterTable';
+import ParameterQualifiedValueTable from './tables/ParameterQualifiedValueTable';
+import PlantDepartmentTable from './tables/PlantDepartmentTable';
+import PlantDeptAbpUserTable from './tables/PlantDeptAbpUserTable';
+import SectionTemplateTable from './tables/SectionTemplateTable';
+import ShiftTable from './tables/ShiftTable';
+import SubSectionTable from './tables/SubSectionTable';
+import ToleranceTable from './tables/ToleranceTable';
+import ParameterNomeTable from './tables/ParameterNomeTable'; // Correct the import
 import UserManage from './pages/UserManage';
 import Profile from './components/Profile';
 import Settings from "./components/Settings";
-import React, { useState } from "react";
-
-// Sample user data
-const initialUserList = [
-  {
-    name: 'John Doe',
-    address: '123 Main St, Anytown',
-    telephone: '+1 234 567 890',
-    username: 'johndoe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
-    profilePicture: '', // Add a default or placeholder image URL if available
-    joinedDate: new Date(),
-    phone: '+1 234 567 890',
-  },
-];
-
 
 // Dashboard Layout Component (Topbar + Sidebar + Content)
 const DashboardLayout = () => (
@@ -46,7 +35,7 @@ const DashboardLayout = () => (
 );
 
 function App() {
-  const [users, setUsers] = useState(initialUserList);
+  const [users, setUsers] = useState([]); // Initial empty user list
 
   return (
     <div>
@@ -59,18 +48,23 @@ function App() {
         {/* Dashboard Routes */}
         <Route element={<DashboardLayout />}> {/* Layout wrapping all dashboard routes */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile user={users[0]} />} /> {/* Pass first user data to Profile */}
+          <Route path="/profile" element={<Profile user={users[0]} />} /> {/* Pass first user data to Profile if available */}
           <Route path="/settings" element={<Settings />} />
           <Route path="/UserManage" element={<UserManage users={users} setUsers={setUsers} />} /> {/* Pass user data to UserManage */}
           <Route path="/masterData" element={<MasterData />} />
-          <Route path="/machine" element={<Machine />} />
-          <Route path="/machine-type" element={<MachineType />} />
-          <Route path="/main-section" element={<MainSection />} />
-          <Route path="/parameter" element={<Parameter />} />
-          <Route path="/parameter-qualified-value" element={<ParameterQualifiedValue />} />
-          <Route path="/section-template" element={<SectionTemplate />} />
-          <Route path="/sub-section" element={<SubSection />} />
-          <Route path="/tolerance" element={<Tolerance />} /> 
+          <Route path="/machine" element={<MachineTable />} />
+          <Route path="/machine-type" element={<MachineTypeTable />} />
+          <Route path="/main-section" element={<MainSectionTable />} />
+          <Route path="/material-code" element={<MaterialCodeTable />} />
+          <Route path="/parameter" element={<ParameterTable />} />
+          <Route path="/parameter-norm" element={<ParameterNomeTable />} /> {/* Match the sidebar link */}
+          <Route path="/parameter-qualified-value" element={<ParameterQualifiedValueTable />} />
+          <Route path="/plant-department" element={<PlantDepartmentTable />} />
+          <Route path="/plant-dept-abp-user" element={<PlantDeptAbpUserTable />} />
+          <Route path="/section-template" element={<SectionTemplateTable />} />
+          <Route path="/shift" element={<ShiftTable />} />
+          <Route path="/sub-section" element={<SubSectionTable />} />
+          <Route path="/tolerance" element={<ToleranceTable />} />
         </Route>
       </Routes>
     </div>

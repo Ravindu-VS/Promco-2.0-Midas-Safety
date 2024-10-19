@@ -1,0 +1,35 @@
+/* Table Styling */
+.machine-data-table {
+    width: 100%; /* Full width for the table */
+    border-collapse: separate; /* Use 'separate' instead of 'collapse' */
+    border-spacing: 0; /* Prevent spacing between cells */
+    border-radius: 10px;
+    overflow: hidden; /* Ensure the rounding is visible */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Add subtle shadow around the table */
+}
+
+/* Header styling */
+.header {
+    background-color: #be171d; /* Dark red background for headers */
+    color: white; /* White text color for headers */
+    padding: 12px; /* Padding for header cells */
+    text-align: left; /* Align text to the left */
+}
+
+/* Data cell styling */
+.cell {
+    background-color: #ffffff; /* White background for data cells */
+    color: #000000; /* Black text color for data cells */
+    padding: 10px; /* Padding for data cells */
+    border-bottom: 1px solid #ddd; /* Light grey border for rows */
+}
+
+/* Hover effect for table rows */
+.machine-data-table tbody tr:hover {
+    background-color: #f5f5f5; /* Light grey background on hover */
+}
+
+/* Table Outline Shadow */
+.machine-data-table {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* More pronounced shadow for the table */
+}

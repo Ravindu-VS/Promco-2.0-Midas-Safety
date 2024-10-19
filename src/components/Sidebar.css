@@ -3,7 +3,7 @@
   position: fixed;
   top: 60px;
   left: 0;
-  width: 278px;
+  width: 328px;
   height: calc(100vh - 60px);
   background-color: #ffffff;
   color: white;
@@ -31,24 +31,30 @@
 
 /* Profile icon */
 .profile-icon {
-  height: 3rem;
-  width: 3rem;
-  background-color: #be171d;
-  color: white;
+  height: 3.5rem; /* Adjusted height */
+  width: 3.5rem; /* Adjusted width */
+  background-color:#be171d;
+  color: rgb(0, 0, 0);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-size: 1.25rem; /* Adjusted font size */
   font-weight: bold;
   margin-right: 1rem;
+  overflow: hidden; /* Ensure content doesn't overflow */
+  border: 2px solid black;
 }
 
+/* Profile picture */
 .profile-picture {
-  width: 100%;
-  height: 100%;
+  width: 50%; /* Make the picture smaller */
+  height: 50%; /* Make the picture smaller */
   border-radius: 50%;
+  object-fit: cover; /* Maintain aspect ratio */
+  border-color: #000;
   object-fit: cover;
+  justify-content: center;
 }
 
 /* Welcome text */

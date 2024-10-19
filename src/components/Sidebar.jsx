@@ -20,25 +20,32 @@ const Sidebar = () => {
   const [user, setUser] = useState({ name: "", email: "", role: "", profilePicture: "" });
   const location = useLocation();
 
+  // Define your master data paths
   const masterDataPaths = [
-    "/machine",
-    "/machine-type",
-    "/main-section",
-    "/parameter",
-    "/parameter-qualified-value",
-    "/section-template",
-    "/sub-section",
-    "/tolerance",
+    { path: "/machine", label: "Machine" },
+    { path: "/machine-type", label: "Machine Type" },
+    { path: "/main-section", label: "Main Section" },
+    { path: "/material-code", label: "Material Code" },
+    { path: "/parameter", label: "Parameter" },
+    { path: "/parameter-norm", label: "Parameter Norm" }, // Match with App.jsx
+    { path: "/parameter-qualified-value", label: "Parameter Qualified Value" },
+    { path: "/plant-department", label: "Plant Department" },
+    { path: "/plant-dept-abp-user", label: "Plant Dept Abp User" },
+    { path: "/section-template", label: "Section Template" },
+    { path: "/shift", label: "Shift" },
+    { path: "/sub-section", label: "Sub Section" },
+    { path: "/tolerance", label: "Tolerance" },
   ];
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setMasterDataOpen(masterDataPaths.includes(location.pathname));
-  }, [location.pathname]);
-
+    setMasterDataOpen(masterDataPaths.some((item) => item.path === location.pathname));
+  }, [location.pathname]); // Only location.pathname as dependency
+  
   const handleMasterDataClick = () => {
     setMasterDataOpen((prev) => !prev);
   };
@@ -117,14 +124,14 @@ const Sidebar = () => {
 
         <Collapse in={masterDataOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {masterDataPaths.map((path, index) => (
+            {masterDataPaths.map((item, index) => (
               <ListItem
                 key={index}
                 button
                 component={Link}
-                to={path}
+                to={item.path}
                 className={
-                  location.pathname === path
+                  location.pathname === item.path
                     ? "nested-link active"
                     : "nested-link"
                 }
@@ -132,7 +139,7 @@ const Sidebar = () => {
                 <ListItemIcon>
                   <BuildIcon className="subsection-icon" />
                 </ListItemIcon>
-                <ListItemText primary={path.replace("/", "").replace("-", " ")} />
+                <ListItemText primary={item.label} />
               </ListItem>
             ))}
           </List>

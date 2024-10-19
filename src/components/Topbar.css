@@ -22,23 +22,36 @@
   display: flex;
   align-items: center;
   position: relative;
-  right: 43px; /* Adjusted right padding for alignment */
+  right: 46px; /* Adjusted right padding for alignment */
+  top: 2px;
 }
 
-/* Profile picture size */
-.profile-picture {
-  width: 35px; /* Reduced width */
-  height: 35px; /* Reduced height */
+.topbar .profile-picture {
+  width: 37px; /* Reduced width */
+  height: 37px; /* Reduced height */
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
   margin-left: 25px; /* Increased space between notification icon and profile */
 }
 
+.topbar .profile-avatar {
+  width: 37px; /* Same size as profile picture */
+  height: 37px;
+  font-size: 1rem; /* Adjust font size for initials */
+  background-color: #be171d; /* Dark red background */
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 /* Adjusted notification icon */
 .notification-icon {
   color: #000000;
-  font-size: 2rem; /* Font size for notification icon */
+  font-size: 2.5rem; /* Font size for notification icon */
   cursor: pointer;
   position: relative; /* Position relative to handle notification count positioning */
 }

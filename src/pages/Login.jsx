@@ -27,7 +27,9 @@ function Login() {
   const authenticateUser = (email, password) => {
     // Retrieve users stored in localStorage from UserManage.jsx
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
-    const user = storedUsers.find((u) => u.email === email && u.password === password);
+    const user = storedUsers.find(
+      (u) => u.email.toLowerCase().trim() === email.toLowerCase().trim() && u.password === password
+    );
     return user ? user.role : null;
   };
 
@@ -69,7 +71,7 @@ function Login() {
       <a href="https://www.midassafety.com/" target="_blank" rel="noopener noreferrer" className="logo-link">
         <img
           src={`${process.env.PUBLIC_URL}/MIDAS-Logo12.png`}
-        alt="Logo" className="logo" />
+          alt="Logo" className="logo" />
       </a>
     </div>
   );

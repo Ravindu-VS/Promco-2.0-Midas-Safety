@@ -1,7 +1,3 @@
-h1 {
-  color: rgb(0, 0, 0);
-  margin-bottom: 20px;
-}
 
 .add-button {
   background-color: #be171d !important;
@@ -14,7 +10,7 @@ h1 {
 }
 
 .table-container {
-  background-color: #121212;
+  background-color: #ffffff;
 }
 
 .table-header-cell {
@@ -33,20 +29,20 @@ h1 {
 }
 
 .dialog-title {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .dialog-content {
-  background-color: #1E1E1E;
-  color: white;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
 }
 
 .dialog-input .MuiInputBase-root {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .dialog-input .MuiInputLabel-root {
-  color: #bbb;
+  color: #000000;
 }
 
 .dialog-input .MuiInputBase-root:after {
@@ -77,7 +73,7 @@ h1 {
 
 /* Icon buttons */
 .MuiIconButton-root {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .MuiIconButton-root:hover {
@@ -94,7 +90,7 @@ h1 {
 
 /* Dialog styles */
 .MuiDialog-paper {
-  background-color: #1E1E1E !important;
+  background-color: #ffffff !important;
   color: rgb(0, 0, 0);
 }
 
@@ -110,11 +106,11 @@ h1 {
 
 /* Password input styling */
 .dialog-password-input .MuiInputBase-root {
-  color: white; /* White text in password input */
+  color: rgb(0, 0, 0); /* White text in password input */
 }
 
 .dialog-password-input .MuiInputLabel-root {
-  color: #bbb; /* Grey label */
+  color: #000000; /* Grey label */
 }
 
 .dialog-password-input .MuiInputBase-root:after {
@@ -152,7 +148,7 @@ h1 {
 .search-bar .MuiInputBase-root {
   background-color: #ffffff;
   color: rgb(0, 0, 0);
-  border: 1px solid #444;
+  border: 1px solid #000000;
   padding: 8px 12px;
   border-radius: 4px;
 }
@@ -162,7 +158,7 @@ h1 {
 }
 
 .search-bar .MuiInputLabel-root {
-  color: #bbb;
+  color: #000000;
 }
 
 .search-bar .MuiInputBase-root:hover:not(.Mui-disabled):before {
@@ -184,10 +180,10 @@ h1 {
 }
 
 .clear-icon {
-  color: #bbb;
+  color: #000000;
   cursor: pointer;
 }
 
 .clear-icon:hover {
-  color: #fff;
+  color: #000000;
 }

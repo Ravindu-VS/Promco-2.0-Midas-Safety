@@ -1,0 +1,142 @@
+/* General styles for the form and table */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff; /* Light grey background */
+    margin: 0;
+    padding: 20px;
+  }
+  
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    max-width: 500px;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  input[type="text"], input[type="checkbox"] {
+    padding: 8px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    width: 100%;
+  }
+  
+  button[type="submit"] {
+    background-color: #be171d; /* Bootstrap blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #be171d;
+  }
+  
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  thead {
+    background-color: #be171d; /* Dark red color */
+    color: white;
+  }
+  
+  tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #fff;
+  }
+  
+  tbody tr:hover {
+    background-color: rgba(190, 23, 29, 0.1); /* Light red on hover */
+  }
+  
+  .deleted-row {
+    background-color: #f8d7da; /* Light red for deleted rows */
+    color: #721c24;
+    text-decoration: line-through;
+  }
+  
+  /* Action buttons */
+  button.edit-button {
+    background-color: #28a745; /* Green for edit */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button.edit-button:hover {
+    background-color: #218838;
+  }
+  
+  button.delete-button {
+    background-color: #dc3545; /* Red for delete */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button.delete-button:hover {
+    background-color: #c82333;
+  }
+  
+  /* Pagination styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    background-color: #be171d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .pagination button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  .pagination span {
+    padding: 8px 12px;
+    font-weight: bold;
+  }
+  

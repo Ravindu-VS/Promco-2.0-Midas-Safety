@@ -16,7 +16,8 @@ html, body {
   padding: 2rem;
   width: calc(100vw - 65px); /* Account for sidebar width */
   height: 100vh;
-  overflow-y: auto; /* Scroll if content overflows */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Centering Content */
@@ -56,9 +57,9 @@ html, body {
 /* Welcome Section */
 .welcome-section {
   width: 1650px;
-  height: 250px;
+  height: 230px;
   background-image: url('/public/welcome.png'); /* Relative to public folder */
-  background-size: 77%; /* Adjust image size */
+  background-size: 70%; /* Adjust image size */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Prevent the image from repeating */
   border-radius: 10px;
@@ -100,6 +101,26 @@ html, body {
   width: 100%;
   resize: none; /* Prevent resizing */
 }
+
+.red-button {
+  background-color: #be171d; /* Red background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Adjust padding */
+  border: none; /* Remove border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.red-button:hover {
+  background-color: #cc0000; /* Darker red on hover */
+}
+
+.red-button:disabled {
+  background-color: #ff9999; /* Lighter red for disabled state */
+  cursor: not-allowed; /* Change cursor for disabled state */
+}
+
 
 /* Button Styling */
 .contact-admin-card button {
