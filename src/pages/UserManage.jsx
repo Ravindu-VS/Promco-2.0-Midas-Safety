@@ -44,53 +44,21 @@ const UserManage = () => {
     if (storedUsers && storedUsers.length > 0) {
       setUserList(storedUsers);
     } else {
-      // Create sample users if no users are stored in localStorage
       const sampleUsers = [
-        {
-          id: '1',
-          username: 'john_doe',
-          email: 'john.doe@example.com',
-          role: 'admin',
-          password: 'password123',
-          profilePicture: '',
-        },
-        {
-          id: '2',
-          username: 'jane_smith',
-          email: 'jane.smith@example.com',
-          role: 'manager',
-          password: 'password123',
-          profilePicture: '',
-        },
-        {
-          id: '3',
-          username: 'michael_jordan',
-          email: 'michael.jordan@example.com',
-          role: 'operator',
-          password: 'password123',
-          profilePicture: '',
-        },
-        {
-          id: '4',
-          username: 'emily_clark',
-          email: 'emily.clark@example.com',
-          role: 'user',
-          password: 'password123',
-          profilePicture: '',
-        },
+        { id: '1', username: 'john_doe', email: 'john.doe@example.com', role: 'admin', password: 'password123', profilePicture: '' },
+        { id: '2', username: 'jane_smith', email: 'jane.smith@example.com', role: 'manager', password: 'password123', profilePicture: '' },
+        { id: '3', username: 'michael_jordan', email: 'michael.jordan@example.com', role: 'operator', password: 'password123', profilePicture: '' },
+        { id: '4', username: 'emily_clark', email: 'emily.clark@example.com', role: 'user', password: 'password123', profilePicture: '' },
       ];
       setUserList(sampleUsers);
       saveUsersToLocalStorage(sampleUsers);
     }
   }, []);
-  
 
-  // Save updated user list to localStorage
   const saveUsersToLocalStorage = (users) => {
     localStorage.setItem('users', JSON.stringify(users));
   };
 
-  // Handle adding a new user
   const handleAddUser = () => {
     if (currentUser.id && currentUser.username && currentUser.email && currentUser.role && currentUser.password) {
       const newUser = { ...currentUser };
@@ -104,7 +72,6 @@ const UserManage = () => {
     }
   };
 
-  // Handle editing an existing user
   const handleEditUser = () => {
     const updatedUserList = userList.map((user) => (user.id === currentUser.id ? currentUser : user));
     setUserList(updatedUserList);
@@ -113,44 +80,40 @@ const UserManage = () => {
     setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
   };
 
-  // Handle deleting a user
   const handleDeleteUser = (id) => {
     const updatedUserList = userList.filter((user) => user.id !== id);
     setUserList(updatedUserList);
     saveUsersToLocalStorage(updatedUserList);
   };
 
-  // Open dialog to add a new user
   const openAddUserDialog = () => {
     setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
     setOpenAddDialog(true);
   };
 
-  // Open dialog to edit an existing user
   const openEditUserDialog = (user) => {
     setCurrentUser(user);
     setOpenEditDialog(true);
   };
 
-  // Navigate to the profile page of a user
+      // When navigating to profile
   const handleViewProfile = (id) => {
-    navigate(`/profile/${id}`);
-  };
+    const user = userList.find((user) => user.id === id);
+    localStorage.setItem('user', JSON.stringify(user)); // Save selected user data to local storage      navigate(`/profile/${id}`);
+    };
 
-  // Filter users based on search input
+
   const filteredUsers = userList.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get initials from username
   const getInitials = (name) => {
     const initials = name.split(' ').map((word) => word[0]).join('');
     return initials.toUpperCase();
   };
 
-  // Handle image upload for user profile picture
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -275,20 +238,11 @@ const UserManage = () => {
             fullWidth
             className="dialog-input"
           />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="dialog-input"
-          />
+          <input type="file" onChange={handleImageChange} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)} className="cancel-button">
-            Cancel
-          </Button>
-          <Button onClick={handleAddUser} className="save-button">
-            Save
-          </Button>
+          <Button onClick={() => setOpenAddDialog(false)} color="primary">Cancel</Button>
+          <Button onClick={handleAddUser} color="primary">Add</Button>
         </DialogActions>
       </Dialog>
 
@@ -299,10 +253,9 @@ const UserManage = () => {
           <TextField
             label="User ID"
             value={currentUser.id}
-            onChange={(e) => setCurrentUser({ ...currentUser, id: e.target.value })}
+            disabled
             fullWidth
             className="dialog-input"
-            disabled
           />
           <TextField
             label="Username"
@@ -317,7 +270,6 @@ const UserManage = () => {
             onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
-            disabled
           />
           <FormControl fullWidth className="dialog-input">
             <InputLabel>Role</InputLabel>
@@ -339,14 +291,11 @@ const UserManage = () => {
             fullWidth
             className="dialog-input"
           />
+          <input type="file" onChange={handleImageChange} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditDialog(false)} className="cancel-button">
-            Cancel
-          </Button>
-          <Button onClick={handleEditUser} className="save-button">
-            Save
-          </Button>
+          <Button onClick={() => setOpenEditDialog(false)} color="primary">Cancel</Button>
+          <Button onClick={handleEditUser} color="primary">Update</Button>
         </DialogActions>
       </Dialog>
     </div>

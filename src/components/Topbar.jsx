@@ -77,7 +77,7 @@ const Topbar = ({ show }) => {
       <div className="topbar-left">
         <a href="https://www.midassafety.com/" target="_blank" rel="noopener noreferrer">
           <img
-            src={`${process.env.PUBLIC_URL}/MIDAS-Logo12.png`}
+            src={`${process.env.PUBLIC_URL}/logo-light.png`}
             alt="Logo"
             className="logo"
           />

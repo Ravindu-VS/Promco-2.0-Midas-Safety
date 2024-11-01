@@ -25,7 +25,7 @@ body {
 .password-toggle {
   position: absolute;
   right: 0px;
-  top: 43%;
+  top: 35%;
   transform: translateY(-50%);
   cursor: pointer;
   color: #555;
@@ -45,7 +45,7 @@ body {
   align-items: flex-start;
   height: 100vh;
   width: 100vw;
-  background-color: #ffffff;
+  background-image: url('E:\KDU\Software Project\PromFeNw\company-app\public\background-light.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -60,34 +60,49 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  background-color: rgba(109, 107, 107, 0.7);
   z-index: 1;
 }
 
+.header-title {
+  font-size: 70px;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #ffffff;
+  margin-bottom: 30px;
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  z-index: 2;
+}
+
 .login-box {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.5);
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.9);
   text-align: center;
   max-width: 350px;
-  height: 450px;
+  height: 500px;
   width: 100%;
   position: absolute;
-  top: 24%;
-  left: 36%;
+  top: 26%;
+  left: 10%;
   z-index: 2;
 }
 
 /* Position logo in the bottom-right corner */
 .logo-link {
   position: absolute;
-  bottom: 40px;
-  left: 200px;
-  z-index: 3;
+  bottom: 870px;
+  right: 15px;
+  z-index: 2;
+
 }
 
 .company-logo {
-  width: 50px; /* Adjust the size of the logo as needed */
+  width: 40px; /* Adjust the size of the logo as needed */
   height: auto;
   cursor: pointer;
 }
@@ -97,12 +112,12 @@ body {
 }
  
 .logo-link img {
-  width: 140px; /* Set a reasonable width for the logo */
+  width: 120px; /* Set a reasonable width for the logo */
   height: auto; /* Maintain aspect ratio */
   cursor: pointer;
   position: absolute;
-  bottom: 870px;
-  right: 5px;
+  bottom: 20px;
+  right: 20px;
   z-index: 3;
 }
 
@@ -111,26 +126,90 @@ body {
   transition: transform 0.3s ease;
 }
 
+@media screen and (max-width: 768px) {
+  .logo-link img {
+    width: 80px; /* Adjust size for smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .logo-link img {
+    width: 60px; /* Further adjust size for very small screens */
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .login-box {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .header-title {
+    font-size: 50px;
+    top: 10px;
+    left: 20px;
+  }
+
+  .login-title {
+    font-size: 40px;
+  }
+
+  .login-input {
+    margin-bottom: 20px;
+  }
+
+  .login-button {
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header-title {
+    font-size: 40px;
+    left: 10px;
+  }
+
+  .login-box {
+    width: 95%;
+    max-width: 350px;
+  }
+
+  .login-title {
+    font-size: 35px;
+  }
+
+  .login-input {
+    margin-bottom: 15px;
+  }
+
+  .login-button {
+    height: 45px;
+  }
+}
+
 .login-title {
   margin-top: 5%;
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-  font-size: 53px;
+  font-size: 70px;
+  text-shadow: #000;
   font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
   color: #be171d;
   z-index: 2;
 }
 
 form {
-  margin-top: 20%;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.9);
+  margin-top: 27%;
   display: flex;
   flex-direction: column;
   z-index: 2;
 }
 
 .login-input {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   padding: 12px;
   height: 30px;
   border: 1px solid #ddd;
@@ -147,10 +226,9 @@ form {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 4rem;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  font-size: 1.8rem;
 }
 
 .login-button:hover {
-  background-color: #be171d;
+  background-color: #8b0000;
 }

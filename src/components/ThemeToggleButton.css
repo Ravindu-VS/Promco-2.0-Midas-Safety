@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 20px; /* Position at the bottom-right of the screen */
     right: 25px;
-    z-index: 1000; /* Ensure it's on top of other elements */
+    z-index: 2000; /* Ensure it's on top of other elements */
   }
   
   .theme-toggle-btn {

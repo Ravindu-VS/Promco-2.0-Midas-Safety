@@ -6,26 +6,14 @@ import { FaPencilAlt } from 'react-icons/fa'; // Import pencil icon
 
 const Profile = () => {
     // Initial user data from localStorage or default values
-    const storedUser = JSON.parse(localStorage.getItem('user')) || {
-        id: '123456',  // Example User ID
-        profilePicture: 'https://via.placeholder.com/150',
-        username: 'JohnDoe',
-        email: 'john.doe@example.com',
-        telephone: '+1 234 567 890',
-        role: 'Admin',  // Now role will be displayed instead of nickname
-        address: '',
-        dob: '',
-        password: '********',
-    };
+    const storedUser = JSON.parse(localStorage.getItem('user'));
 
-    const [userData, setUserData] = useState(storedUser);
+    const [userData, setUserData] = useState(storedUser || null);
 
     useEffect(() => {
         // Load user data from localStorage when the component mounts
         const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) {
-            setUserData(storedUser);
-        }
+        setUserData(storedUser);
     }, []);
 
     const handleInputChange = (e) => {
@@ -59,6 +47,20 @@ const Profile = () => {
         alert('Profile updated successfully!');
     };
 
+    if (!userData) {
+        return (
+            <div className="profile-container">
+                <Sidebar profilePicture={null} />
+                <div className="content">
+                    <Topbar profilePicture={null} />
+                    <div className="main-content">
+                        <h2>No user data available</h2>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="profile-container">
             {/* Sidebar */}
@@ -76,7 +78,7 @@ const Profile = () => {
                             {/* Profile Picture */}
                             <div className="profile-picture-section">
                                 <img
-                                    src={userData.profilePicture}
+                                    src={userData.profilePicture || 'https://via.placeholder.com/150'}
                                     alt="User Profile"
                                     className="profile-picture"
                                 />
