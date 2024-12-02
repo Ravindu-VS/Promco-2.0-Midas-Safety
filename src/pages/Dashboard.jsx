@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import CalendarComponent from "../components/CalendarComponent";
 import MachineDataTable from "../tables/MachineDataTable";
-import './Dashboard.css'; 
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [user, setUser] = useState({ name: "", email: "", role: "" });
@@ -92,7 +92,6 @@ const Dashboard = () => {
     <div className="dashboard-main-content">
       {/* Topbar */}
       <Topbar show={true} />
-      <Sidebar />
 
       {/* Main Content */}
       <div className="dashboard-content">
@@ -101,36 +100,11 @@ const Dashboard = () => {
 
         {/* Dashboard Flex Section */}
         <div className="dashboard-section">
-          {/* Latest Updates */}
-          <div className="dashboard-card">
-            <h3 className="card-title">Latest Updates</h3>
-            <MachineDataTable />
-          </div>
 
           {/* Calendar */}
           <div className="dashboard-card">
             <h3 className="card-title">Calendar</h3>
             <CalendarComponent onDateSelect={handleDateSelect} />
-          </div>
-
-          {/* App Usage Time */}
-          <div className="dashboard-card">
-            <h3 className="card-title">App Usage Time</h3>
-            <p>{selectedDate ? `Time Spent on ${selectedDate.toDateString()}: ${appUsageData.length > 0 ? appUsageData[0].timeSpent : "No Data"}` : "Select a date to see the data."}</p>
-          </div>
-
-          {/* Daily Work */}
-          <div className="dashboard-card">
-            <h3 className="card-title">Daily Work</h3>
-            {selectedDate ? (
-              <ul>
-                {dailyWorkData.length > 0 ? dailyWorkData.map((work, index) => (
-                  <li key={index}>{work.task}</li>
-                )) : "No data available for this date."}
-              </ul>
-            ) : (
-              "Select a date to see the daily work."
-            )}
           </div>
 
           {/* Generate Report */}
@@ -143,20 +117,22 @@ const Dashboard = () => {
           </div>
 
           {/* Contact Admin */}
-          <div className="dashboard-card">
-            <h3 className="card-title">Contact Admin</h3>
-            <form onSubmit={handleAdminMessageSubmit}>
-              <textarea
-                value={adminMessage}
-                onChange={(e) => setAdminMessage(e.target.value)}
-                placeholder="Write your message here..."
-                rows="4"
-                required
-                style={{ width: "100%", resize: "none" }} // Custom styles
-              />
-              <button type="submit" style={{ marginTop: "10px" }}>Send Message</button>
-            </form>
-          </div>
+          {user.role !== "admin" && ( // Only show if the user is not an admin
+            <div className="dashboard-card">
+              <h3 className="card-title">Contact Admin</h3>
+              <form onSubmit={handleAdminMessageSubmit}>
+                <textarea
+                  value={adminMessage}
+                  onChange={(e) => setAdminMessage(e.target.value)}
+                  placeholder="Write your message here..."
+                  rows="4"
+                  required
+                  style={{ width: "100%", resize: "none" }} // Custom styles
+                />
+                <button type="submit" style={{ marginTop: "10px" }}>Send Message</button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>

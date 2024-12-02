@@ -1,24 +1,33 @@
-/* General Reset */
-html, body {
-  height: 100%;
+/* General Layout */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: 'Arial', sans-serif;
-  background-color: #ffffff;
-  color: #000000; 
 }
 
-/* Main Content Styling */
+/* Container for sidebar and topbar */
+.main-layout {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
 .dashboard-main-content {
   flex: 1;
-  background-color: #ffffff; 
+  margin-left: 250px;
   padding: 2rem;
-  width: calc(100vw - 65px); /* Account for sidebar width */
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll; /* Allow scrolling */
+  -ms-overflow-style: none;  /* Hide scrollbar for Internet Explorer */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
 }
+
+.dashboard-main-content::-webkit-scrollbar {
+  display: none;  /* Hide scrollbar for Webkit-based browsers (Chrome, Safari) */
+}
+
 
 /* Centering Content */
 .dashboard-content {
@@ -32,119 +41,59 @@ html, body {
 .dashboard-section {
   display: flex;
   flex-wrap: wrap;
-  justify-content: right;
-  gap: 6.3rem; /* Spacing between cards */
+  justify-content: flex-start;
+  gap: 1.5rem;
 }
 
 /* Cards Styling */
 .dashboard-card {
-  background-color: #f7f7f7; /* Lighter background for cards */
+  background-color: transparent;
   border-radius: 12px;
   padding: 2rem;
-  width: calc(34% - 1rem); /* Fit 3 cards per row */
-  min-width: 250px; /* Prevent card from shrinking too much */
-  color: #333333; /* Dark text on cards */
+  width: calc(33% - 1rem);
+  min-width: 250px;
+  color: #000000;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Include shadow transition */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .dashboard-card:hover {
-  transform: scale(1.05); /* Slight zoom effect on hover */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Welcome Section */
 .welcome-section {
-  width: 1650px;
+  width: 100%;
   height: 230px;
-  background-image: url('/public/welcome.png'); /* Relative to public folder */
-  background-size: 70%; /* Adjust image size */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-image: url('/public/welcome.png');
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 10px;
   margin-bottom: 2rem;
-  display: fixed;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Card Titles */
 .card-title {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #333333; /* Darker text for better readability */
+  color: #000000;
   margin-bottom: 1rem;
 }
-
-/* Machine Data and Calendar Card Styling */
-.machine-data-card, .calendar-card {
-  background-color: #ffffff; /* White cards */
-  color: #000000; /* Black text */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  padding: 20px;
-}
-
-/* Contact Admin Card Styling */
-.contact-admin-card {
-  background-color: #e0f7fa; /* Light cyan background for contact card */
-  border: 1px solid #b2ebf2; /* Slightly darker border */
-}
-
-.contact-admin-card textarea {
-  border-radius: 8px;
-  border: 1px solid #ccc; /* Gray border for the textarea */
-  padding: 10px; /* Padding inside the textarea */
-  width: 100%;
-  resize: none; /* Prevent resizing */
-}
-
-.red-button {
-  background-color: #be171d; /* Red background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Adjust padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer on hover */
-  transition: background-color 0.3s ease; /* Smooth hover effect */
-}
-
-.red-button:hover {
-  background-color: #cc0000; /* Darker red on hover */
-}
-
-.red-button:disabled {
-  background-color: #ff9999; /* Lighter red for disabled state */
-  cursor: not-allowed; /* Change cursor for disabled state */
-}
-
-
-/* Button Styling */
-.contact-admin-card button {
-  background-color: #008CBA; /* Blue background */
-  color: white; /* White text */
-  padding: 10px 15px; /* Button padding */
-  border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s; /* Smooth transition */
-}
-
-.contact-admin-card button:hover {
-  background-color: #005f7f; /* Darker blue on hover */
+body.dark-theme .card-title{
+  color: #fff;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .dashboard-card {
-    width: calc(45% - 1rem); /* Adjust to 2 cards per row */
+    width: calc(45% - 1rem); /* Two cards per row on smaller screens */
   }
-
-  .welcome-text {
-    font-size: 2rem; /* Smaller text on smaller screens */
+  .welcome-section {
+    background-size: 80%;
   }
 }
 
@@ -152,8 +101,7 @@ html, body {
   .dashboard-card {
     width: 100%; /* Single-column layout on small screens */
   }
-
-  .welcome-text {
-    font-size: 1.5rem; /* Further reduce text size */
+  .welcome-section {
+    background-size: 100%;
   }
 }

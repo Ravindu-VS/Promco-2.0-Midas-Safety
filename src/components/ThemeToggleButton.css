@@ -1,34 +1,37 @@
 .theme-toggle-container {
-    position: fixed;
-    bottom: 20px; /* Position at the bottom-right of the screen */
-    right: 25px;
-    z-index: 2000; /* Ensure it's on top of other elements */
-  }
-  
-  .theme-toggle-btn {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .theme-toggle-btn:hover {
-    transform: scale(1.1); /* Animation on hover */
-  }
-  
-  .theme-icon {
-    font-size: 24px;
-    color: #000;
-    transition: color 0.3s ease-in-out;
-  }
-  
-  body.dark-theme .theme-icon {
-    color: #fff;
-  }
-  
+  position: fixed;
+  bottom: 20px;
+  right: 25px;
+  z-index: 2000;
+}
+
+.theme-toggle-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.1);
+}
+
+.theme-icon {
+  font-size: 24px;
+  color: #000;
+  transition: color 0.3s ease-in-out;
+}
+
+body.dark-theme .theme-icon {
+  color: #fff;
+}
+
+body.light-theme .theme-icon {
+  color: #000000;
+}
+

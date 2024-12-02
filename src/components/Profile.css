@@ -1,150 +1,219 @@
+/* General Layout */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: transparent;
+  font-family: 'Roboto', sans-serif;
+}
 
-  /* Main content area */
-  .content {
-    flex: 1;
-    padding: 20px;
-    background-color: white; /* White background for content */
-    color: black; /* Black text for contrast */
-  }
-  
-  /* Profile card styling */
-  .profile-card {
-    background-color: white; /* White background for profile card */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Slight shadow for depth */
-  }
-  
-  /* Profile header section */
-  .profile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  /* Profile picture section */
-  .profile-picture-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .profile-picture {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 2px solid black; /* Black border for the profile picture */
-    margin-bottom: 10px;
-  }
-  
-  .upload-label {
-    font-size: 14px;
-    color: #be171d; /* Red color for upload label */
-    cursor: pointer;
-  }
-  
-  .upload-input {
-    display: none; /* Hidden file input */
-  }
-  
-  /* Profile name section */
-  .profile-name-section h3 {
-    color: black; /* Black text for name */
-    margin-top: 0;
-  }
-  
-  /* Profile form table */
-  .profile-form table {
-    width: 100%;
-    border-spacing: 0;
-    border-collapse: collapse;
-  }
-  
-  /* Table cells styling */
-  .profile-form td {
-    padding: 10px 5px;
-    color: black; /* Black text */
-    font-weight: bold;
-  }
-  
-  .profile-form input {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-bottom: 2px solid black; /* Black underline */
-    background-color: transparent;
-    color: black; /* Black text */
-    font-size: 14px;
-  }
-  
-  .profile-form input:focus {
-    outline: none;
-    border-bottom-color: #be171d; /* Red border on focus */
-  }
-  
-  /* Edit icon styling */
-  .edit-icon {
-    cursor: pointer;
-    color: #be171d; /* Red for edit icons */
-  }
-  
-  .edit-icon.disabled {
-    color: #555; /* Grey for disabled icons */
-    cursor: not-allowed;
-  }
-  
-  /* Save button */
-  .save-button {
-    background-color: #be171d; /* Red background */
-    color: white; /* White text */
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    font-size: 16px;
-  }
-  
-  .save-button:hover {
-    background-color: #a31416; /* Darker red on hover */
-  }
-  
-  .profile-password-container {
-    position: relative; /* Position relative for positioning the icon */
-    width: 100%; /* Ensures the container takes full width */
+/* Main content area */
+.content {
+  flex: 1;
+  padding: 20px;
+  background-color: transparent; /* Transparent background */
+  color: rgb(0, 0, 0); /* White text for contrast */
+  margin-left: 600px; /* Adjust for sidebar width */
+  margin-top: 200px;   /* Adjust for topbar height */
+  height: calc(100vh - 64px); /* Full height minus topbar */
+  overflow-y: auto; /* Allow scrolling */
+}
+
+body.dark-theme .content{
+  color:white;
+}
+/* Page title centering */
+.page-title {
+  text-align: center;  /* Horizontally center the text */
+  margin: 0;  /* Remove default margin */
+  font-size: 50px;  /* Set a desired font size */
+  color: black;  /* Ensure the text is visible */
+  position: absolute;  /* Position the title absolutely */
+  top: 13%;  /* Vertically center it */
+  left: 50%;  /* Horizontally center it */
+  transform: translate(-50%, -50%);  /* Adjust to truly center it */
+  font-weight: bold;  /* Make the title bold */
+}
+
+body.dark-theme .page-title{
+  color:white;
+}
+
+
+/* Profile card styling */
+.profile-card {
+  background-color: transparent; /* Transparent background for profile card */
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #444; /* Border to make it stand out against the background */
+  margin-top: 20px; /* Add spacing above the profile card */
+}
+
+/* Profile header section */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Profile picture section */
+.profile-picture-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #be171d; /* Red border for the profile picture */
+  margin-bottom: 10px;
+}
+
+/* Upload label */
+.upload-label {
+  font-size: 14px;
+  color: #be171d; /* Red color for upload label */
+  cursor: pointer;
+}
+
+.upload-input {
+  display: none; /* Hidden file input */
+}
+
+/* Profile name section */
+.profile-name-section h3 {
+  color: rgb(0, 0, 0); /* White text for name to match current theme */
+  margin-top: 0;
+}
+
+body.dark-theme .profile-name-section h3{
+  color:white;
+}
+
+/* Profile form table */
+.profile-form table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+/* Table cells styling */
+.profile-form td {
+  padding: 10px 5px;
+  color: rgb(0, 0, 0); /* White text */
+  font-weight: bold;
+}
+
+body.dark-theme .profile-form td {
+  color: white;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-bottom: 2px solid #be171d; /* Red underline */
+  background-color: transparent; /* Transparent background */
+  color: rgb(0, 0, 0); /* White text for input fields */
+  font-size: 14px;
+}
+
+body.dark-theme .profile-form input{
+  color: white;
+}
+
+.profile-form input:focus {
+  outline: none;
+  border-bottom-color: #be171d; /* Red border on focus */
+}
+
+/* Edit icon styling */
+.edit-icon {
+  cursor: pointer;
+  color: #be171d; /* Red for edit icons */
+}
+
+.edit-icon.disabled {
+  color: #555; /* Grey for disabled icons */
+  cursor: not-allowed;
+}
+
+/* Save button */
+.save-button {
+  background-color: #be171d; /* Red background */
+  color: white; /* White text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.save-button:hover {
+  background-color: #9e1415; /* Darker red on hover */
+}
+
+/* Profile password container */
+.profile-password-container {
+  position: relative; /* Position relative for positioning the icon */
+  width: 100%; /* Ensures the container takes full width */
 }
 
 .profile-input {
-    width: calc(100% - 30px); /* Adjust width to accommodate the icon */
-    padding-right: 30px; /* Add padding to the right to prevent text overlap with the icon */
+  width: calc(100% - 30px); /* Adjust width to accommodate the icon */
+  padding-right: 30px; /* Add padding to the right to prevent text overlap with the icon */
 }
 
 .profile-password-container-password-toggle {
-    position: absolute; /* Position the icon absolutely */
-    right: 10px; /* Align to the right side */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Adjust to align vertically */
-    cursor: pointer;
-    color: gray; /* Change color to match your theme */
+  position: absolute; /* Position the icon absolutely */
+  right: 10px; /* Align to the right side */
+  top: 50%; /* Center vertically */
+  transform: translateY(-50%); /* Adjust to align vertically */
+  cursor: pointer;
+  color: gray; /* Change color to match your theme */
 }
 
-
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .profile-container {
-      flex-direction: column;
-    }
-  
-    .profile-picture {
-      width: 80px;
-      height: 80px;
-    }
-  
-    .save-button {
-      width: 100%;
-    }
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0; /* Remove sidebar space on smaller screens */
+    margin-top: 64px; /* Keep topbar space */
   }
-  
+
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+  }
+
+  .save-button {
+    width: 100%;
+  }
+
+  /* Make profile card more compact on mobile */
+  .profile-card {
+    padding: 15px;
+  }
+
+  .profile-form td {
+    padding: 8px 5px;
+  }
+
+  .profile-form input {
+    padding: 8px;
+  }
+
+  .profile-password-container-password-toggle {
+    right: 15px; /* Slightly adjust for smaller screens */
+  }
+}

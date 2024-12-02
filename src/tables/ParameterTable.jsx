@@ -1,161 +1,223 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+  IconButton,
+  Button,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { styled } from "@mui/material/styles";
+import { Box } from "@mui/system";
+import "./Table.css";
+
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
 
 const ParameterTable = () => {
-  // Initial state for the form inputs and parameter list
-  const [parameterData, setParameterData] = useState({
+  const [parameters, setParameters] = useState([]);
+  const [newParameter, setNewParameter] = useState({
     parameter: "",
     hasDeleted: false,
     plantDepld: "",
   });
+  const [editingParameter, setEditingParameter] = useState(null); // To track the parameter being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [parameters, setParameters] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the parameter being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const parametersPerPage = 10; // Number of parameters to display per page
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        parameter: "Temperature",
+        hasDeleted: false,
+        plantDepld: "Plant A",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+      {
+        parameter: "Pressure",
+        hasDeleted: false,
+        plantDepld: "Plant B",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+    ];
+    setParameters(initialData);
+  }, []);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setParameterData({
-      ...parameterData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+  const handleAddParameter = () => {
+    // Check if any required field is empty
+    if (
+      Object.entries(newParameter).some(
+        ([key, value]) =>
+          typeof value === "string" && value.trim() === "" && key !== "hasDeleted"
+      )
+    ) {
+      console.log("Please fill all fields before adding.");
+      return;
+    }
 
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const currentTime = new Date().toISOString(); // Get current time in ISO format
+    const newParameterData = {
+      ...newParameter,
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+    };
 
-    if (editIndex !== null) {
-      // Editing an existing parameter
-      const updatedParameters = parameters.map((parameter, index) => 
-        index === editIndex 
-          ? { ...parameterData, modifiedTime: currentTime, createdTime: parameter.createdTime } 
-          : parameter
+    // If editing, update the existing parameter
+    if (editingParameter) {
+      const updatedParameters = parameters.map((param) =>
+        param === editingParameter ? { ...newParameterData } : param
       );
       setParameters(updatedParameters);
-      setEditIndex(null); // Reset edit mode
+      setEditingParameter(null); // Stop editing after save
     } else {
-      // Adding a new parameter
-      setParameters([
-        ...parameters,
-        { 
-          ...parameterData,
-          createdTime: currentTime,
-          modifiedTime: currentTime 
-        }
+      // Add a new parameter to the list
+      setParameters((prevParameters) => [
+        ...prevParameters,
+        newParameterData,
       ]);
     }
 
-    // Reset the form after submission
-    setParameterData({
+    resetNewParameter(); // Clear input fields after adding or saving
+  };
+
+  const handleEditParameter = (parameter) => {
+    setEditingParameter(parameter);
+    setNewParameter({ ...parameter }); // Populate the form fields with the current parameter's data
+  };
+
+  const handleDeleteParameter = (parameterIndex) => {
+    setParameters((prevParameters) =>
+      prevParameters.filter((_, index) => index !== parameterIndex)
+    );
+  };
+
+  const resetNewParameter = () => {
+    setNewParameter({
       parameter: "",
       hasDeleted: false,
       plantDepld: "",
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const parameterToEdit = parameters[index];
-    setParameterData(parameterToEdit);
-    setEditIndex(index); // Set the index to track which parameter is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastParameterIndex = currentPage * parametersPerPage;
-  const firstParameterIndex = lastParameterIndex - parametersPerPage;
-  const currentParameters = parameters.slice(firstParameterIndex, lastParameterIndex);
-
-  const totalPages = Math.ceil(parameters.length / parametersPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Parameter:</label>
-          <input
-            type="text"
-            name="parameter"
-            value={parameterData.parameter}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Has Deleted:</label>
-          <input
-            type="checkbox"
-            name="hasDeleted"
-            checked={parameterData.hasDeleted}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>Plant Depld:</label>
-          <input
-            type="text"
-            name="plantDepld"
-            value={parameterData.plantDepld}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Parameter" : "Add Parameter"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Parameter Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Parameter</th>
-            <th>Has Deleted</th>
-            <th>Created Time</th>
-            <th>Modified Time</th>
-            <th>Plant Depld</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentParameters.map((parameter, index) => (
-            <tr key={index}>
-              <td>{parameter.parameter}</td>
-              <td>{parameter.hasDeleted ? "Yes" : "No"}</td>
-              <td>{new Date(parameter.createdTime).toLocaleString()}</td>
-              <td>{new Date(parameter.modifiedTime).toLocaleString()}</td>
-              <td>{parameter.plantDepld}</td>
-              <td>
-                <button onClick={() => handleEdit(firstParameterIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+      {/* Form for adding/editing parameters */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="Parameter"
+            variant="outlined"
+            value={newParameter.parameter}
+            onChange={(e) =>
+              setNewParameter({ ...newParameter, parameter: e.target.value })
+            }
+            className="input-field"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newParameter.hasDeleted}
+                onChange={(e) =>
+                  setNewParameter({ ...newParameter, hasDeleted: e.target.checked })
+                }
+                color="error"
+              />
+            }
+            label="Has Deleted"
+          />
+          <TextField
+            label="Plant Depld"
+            variant="outlined"
+            value={newParameter.plantDepld}
+            onChange={(e) =>
+              setNewParameter({ ...newParameter, plantDepld: e.target.value })
+            }
+            className="input-field"
+          />
+        </div>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Parameter"
+          onClick={handleAddParameter}
+        >
+          {editingParameter ? "Save Changes" : "Add Parameter"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Parameter</StyledTableCell>
+            <StyledTableCell>Has Deleted</StyledTableCell>
+            <StyledTableCell>Created Time</StyledTableCell>
+            <StyledTableCell>Modified Time</StyledTableCell>
+            <StyledTableCell>Plant Depld</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {parameters
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((parameter, index) => (
+              <TableRow key={index}>
+                <TableCell>{parameter.parameter}</TableCell>
+                <TableCell>{parameter.hasDeleted ? "Yes" : "No"}</TableCell>
+                <TableCell>{new Date(parameter.createdTime).toLocaleString()}</TableCell>
+                <TableCell>{new Date(parameter.modifiedTime).toLocaleString()}</TableCell>
+                <TableCell>{parameter.plantDepld}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeleteParameter(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditParameter(parameter)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={parameters.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

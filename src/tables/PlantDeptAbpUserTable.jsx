@@ -1,154 +1,198 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  IconButton,
+  Button,
+  TextField, // Add this line
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { styled } from "@mui/material/styles";
+import { Box } from "@mui/system";
+import "./Table.css";
+
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
 
 const PlantDeptAbpUserTable = () => {
-  // Initial state for the form inputs and plant department ABP users list
-  const [plantDeptAbpUserData, setPlantDeptAbpUserData] = useState({
-    id: "",
-    AbpUserId: "",
-    plantDeptId: "",
-  });
-
   const [plantDeptAbpUsers, setPlantDeptAbpUsers] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the plant department ABP user being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const plantDeptAbpUsersPerPage = 10; // Number of plant department ABP users to display per page
+  const [newPlantDeptAbpUser, setNewPlantDeptAbpUser] = useState({
+    abpUserId: "",
+    plantDepartmentId: "",
+  });
+  const [editingPlantDeptAbpUser, setEditingPlantDeptAbpUser] = useState(null); // To track the plant department ABP user being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPlantDeptAbpUserData({
-      ...plantDeptAbpUserData,
-      [name]: value,
-    });
-  };
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        abpUserId: "ABP001",
+        plantDepartmentId: "PD001",
+      },
+      {
+        abpUserId: "ABP002",
+        plantDepartmentId: "PD002",
+      },
+    ];
+    setPlantDeptAbpUsers(initialData);
+  }, []);
 
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleAddPlantDeptAbpUser = () => {
+    // Check if any required field is empty
+    if (
+      Object.entries(newPlantDeptAbpUser).some(
+        ([key, value]) => value.trim() === ""
+      )
+    ) {
+      console.log("Please fill all fields before adding.");
+      return;
+    }
 
-    if (editIndex !== null) {
-      // Editing an existing plant department ABP user
-      const updatedPlantDeptAbpUsers = plantDeptAbpUsers.map((user, index) => 
-        index === editIndex 
-          ? { ...plantDeptAbpUserData } 
-          : user
+    // If editing, update the existing plant department ABP user
+    if (editingPlantDeptAbpUser) {
+      const updatedPlantDeptAbpUsers = plantDeptAbpUsers.map((plantDeptAbpUser) =>
+        plantDeptAbpUser === editingPlantDeptAbpUser
+          ? { ...newPlantDeptAbpUser }
+          : plantDeptAbpUser
       );
       setPlantDeptAbpUsers(updatedPlantDeptAbpUsers);
-      setEditIndex(null); // Reset edit mode
+      setEditingPlantDeptAbpUser(null); // Stop editing after save
     } else {
-      // Adding a new plant department ABP user
-      setPlantDeptAbpUsers([
-        ...plantDeptAbpUsers,
-        { 
-          ...plantDeptAbpUserData,
-        }
+      // Add a new plant department ABP user to the list
+      setPlantDeptAbpUsers((prevPlantDeptAbpUsers) => [
+        ...prevPlantDeptAbpUsers,
+        newPlantDeptAbpUser,
       ]);
     }
 
-    // Reset the form after submission
-    setPlantDeptAbpUserData({
-      id: "",
-      AbpUserId: "",
-      plantDeptId: "",
+    resetNewPlantDeptAbpUser(); // Clear input fields after adding or saving
+  };
+
+  const handleEditPlantDeptAbpUser = (plantDeptAbpUser) => {
+    setEditingPlantDeptAbpUser(plantDeptAbpUser);
+    setNewPlantDeptAbpUser({ ...plantDeptAbpUser }); // Populate the form fields with the current plant department ABP user's data
+  };
+
+  const handleDeletePlantDeptAbpUser = (plantDeptAbpUserIndex) => {
+    setPlantDeptAbpUsers((prevPlantDeptAbpUsers) =>
+      prevPlantDeptAbpUsers.filter((_, index) => index !== plantDeptAbpUserIndex)
+    );
+  };
+
+  const resetNewPlantDeptAbpUser = () => {
+    setNewPlantDeptAbpUser({
+      abpUserId: "",
+      plantDepartmentId: "",
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const plantDeptAbpUserToEdit = plantDeptAbpUsers[index];
-    setPlantDeptAbpUserData(plantDeptAbpUserToEdit);
-    setEditIndex(index); // Set the index to track which plant department ABP user is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastPlantDeptAbpUserIndex = currentPage * plantDeptAbpUsersPerPage;
-  const firstPlantDeptAbpUserIndex = lastPlantDeptAbpUserIndex - plantDeptAbpUsersPerPage;
-  const currentPlantDeptAbpUsers = plantDeptAbpUsers.slice(firstPlantDeptAbpUserIndex, lastPlantDeptAbpUserIndex);
-
-  const totalPages = Math.ceil(plantDeptAbpUsers.length / plantDeptAbpUsersPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>ID:</label>
-          <input
-            type="text"
-            name="id"
-            value={plantDeptAbpUserData.id}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>ABP User ID:</label>
-          <input
-            type="text"
-            name="AbpUserId"
-            value={plantDeptAbpUserData.AbpUserId}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Plant Department ID:</label>
-          <input
-            type="text"
-            name="plantDeptId"
-            value={plantDeptAbpUserData.plantDeptId}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Plant Dept ABP User" : "Add Plant Dept ABP User"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Plant Department ABP User Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ABP User ID</th>
-            <th>Plant Department ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentPlantDeptAbpUsers.map((user, index) => (
-            <tr key={index}>
-              <td>{user.id}</td>
-              <td>{user.AbpUserId}</td>
-              <td>{user.plantDeptId}</td>
-              <td>
-                <button onClick={() => handleEdit(firstPlantDeptAbpUserIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+      {/* Form for adding/editing plant department ABP users */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="ABP User ID"
+            variant="outlined"
+            value={newPlantDeptAbpUser.abpUserId}
+            onChange={(e) =>
+              setNewPlantDeptAbpUser({
+                ...newPlantDeptAbpUser,
+                abpUserId: e.target.value,
+              })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Plant Department ID"
+            variant="outlined"
+            value={newPlantDeptAbpUser.plantDepartmentId}
+            onChange={(e) =>
+              setNewPlantDeptAbpUser({
+                ...newPlantDeptAbpUser,
+                plantDepartmentId: e.target.value,
+              })
+            }
+            className="input-field"
+          />
+        </div>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Plant Department ABP User"
+          onClick={handleAddPlantDeptAbpUser}
+        >
+          {editingPlantDeptAbpUser ? "Save Changes" : "Add Plant Dept ABP User"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>ID</StyledTableCell>
+            <StyledTableCell>ABP User ID</StyledTableCell>
+            <StyledTableCell>Plant Department ID</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {plantDeptAbpUsers
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((plantDeptAbpUser, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{plantDeptAbpUser.abpUserId}</TableCell>
+                <TableCell>{plantDeptAbpUser.plantDepartmentId}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeletePlantDeptAbpUser(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditPlantDeptAbpUser(plantDeptAbpUser)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={plantDeptAbpUsers.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

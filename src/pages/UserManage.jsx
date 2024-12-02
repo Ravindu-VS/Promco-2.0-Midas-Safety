@@ -45,10 +45,10 @@ const UserManage = () => {
       setUserList(storedUsers);
     } else {
       const sampleUsers = [
-        { id: '1', username: 'john_doe', email: 'john.doe@example.com', role: 'admin', password: 'password123', profilePicture: '' },
-        { id: '2', username: 'jane_smith', email: 'jane.smith@example.com', role: 'manager', password: 'password123', profilePicture: '' },
-        { id: '3', username: 'michael_jordan', email: 'michael.jordan@example.com', role: 'operator', password: 'password123', profilePicture: '' },
-        { id: '4', username: 'emily_clark', email: 'emily.clark@example.com', role: 'user', password: 'password123', profilePicture: '' },
+        { id: '1', username: 'john_doe', email: 'admin@example.com', role: 'admin', password: 'adminpass', profilePicture: '' },
+        { id: '2', username: 'jane_smith', email: 'manager@example.com', role: 'manager', password: 'managerpass', profilePicture: '' },
+        { id: '3', username: 'michael_jordan', email: 'operator@example.com', role: 'operator', password: 'operatorpass', profilePicture: '' },
+        { id: '4', username: 'emily_clark', email: 'user@example.com', role: 'user', password: 'userpass', profilePicture: '' },
       ];
       setUserList(sampleUsers);
       saveUsersToLocalStorage(sampleUsers);
@@ -127,6 +127,7 @@ const UserManage = () => {
 
   return (
     <div className="user-manage-container">
+      <h2 className="page-title">User Manage</h2>
       <div className="toolbar">
         <TextField
           label="Search Users"
@@ -139,7 +140,6 @@ const UserManage = () => {
           Add User
         </Button>
       </div>
-      <TableContainer component={Paper} className="table-container">
         <Table>
           <TableHead>
             <TableRow>
@@ -191,7 +191,6 @@ const UserManage = () => {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
 
       {/* Add User Dialog */}
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>

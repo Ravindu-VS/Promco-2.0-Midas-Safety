@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from "react";
-import "./ThemeToggleButton.css";
-import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md"; // Icons for light and dark mode
+import React, { useEffect } from "react";
+import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md"; // Icons from react-icons
+import { useTheme } from '../hooks/useTheme'; // Make sure the path is correct
+import "./ThemeToggleButton.css"; // Add your styles for the button
 
 const ThemeToggleButton = () => {
-  // Default theme is light
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  // Get theme state and toggle function from useTheme hook
+  const { theme, toggleTheme } = useTheme(); // This is the only theme state you need
 
-  // Function to toggle between light and dark theme
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme); // Save the theme preference in localStorage
-  };
-
-  // Apply the theme to the body on mount and whenever theme changes
+  // Apply the theme to the body on mount and whenever the theme changes
   useEffect(() => {
-    document.body.className = theme + "-theme";
+    document.body.className = theme + "-theme"; // Apply the theme class
+    localStorage.setItem("theme", theme); // Optionally, save the theme preference to localStorage
   }, [theme]);
 
   return (
     <div className="theme-toggle-container">
-      <button className="theme-toggle-btn" onClick={toggleTheme}>
+      <button
+        className="theme-toggle-btn"
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+      >
         {theme === "light" ? (
           <MdOutlineDarkMode className="theme-icon" />
         ) : (

@@ -1,0 +1,213 @@
+/* General Layout */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Main content area */
+  .table-main-content {
+    flex: 1;
+    margin: 20px;
+    margin-left: 300px; /* Adjust for sidebar width */
+    margin-top: 200px;   /* Adjust for topbar height */
+    padding: 2rem;
+    height: calc(100vh - 64px); /* Full height minus topbar */
+    overflow-y: auto; /* Allow scrolling */
+    background: transparent;
+  }
+  
+  /* Add these rules in Table.css to target rounded corners */
+  .table-frame {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
+  }
+  
+  body.dark-theme .table-frame {
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+  }
+  
+  .table-frame th:first-child,
+  .table-frame td:first-child {
+    border-top-left-radius: 15px;
+  }
+  
+  .table-frame th:last-child,
+  .table-frame td:last-child {
+    border-top-right-radius: 15px;
+  }
+  
+  .form-container {
+    margin-bottom: 20px; /* Adds space below the form */
+  }
+  
+  /* Title of the page */
+  .page-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  /* Form Inputs in a Row */
+  .input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Form input fields styling */
+  .input-field {
+    flex: 1;
+    min-width: 180px; /* Ensure each field stays compact */
+  }
+  
+  /* Table Container Styling */
+  .MuiPaper-root {
+    background-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  /* Table Header */
+  .MuiTableHead-root .MuiTableCell-root {
+    color: rgb(255, 255, 255); /* Transparent background for header */
+    background-color: #be171d;
+    font-weight: bold;
+  }
+  
+  /* Pagination Styling */
+.MuiTablePagination-root {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+  }
+  
+/* Ensure pagination arrows (Next/Previous) are white in dark mode */
+body.dark-theme .MuiTablePagination-root .MuiIconButton-root {
+    color: white !important; /* Force the icon button color to white */
+  }
+  
+  /* Ensure SVG arrows (for Next/Previous) inside icon buttons are white */
+  body.dark-theme .MuiTablePagination-root .MuiIconButton-root svg {
+    fill: white !important; /* Force the arrow icon color to white */
+  }
+  
+  /* Pagination text and page number should be white */
+  body.dark-theme .MuiTablePagination-root .MuiTypography-root {
+    color: white !important; /* Ensure the text in pagination is white */
+  }
+  
+  /* Page numbers should also be white in dark mode */
+  body.dark-theme .MuiTablePagination-root .MuiTypography-body1 {
+    color: white !important; /* Ensure page numbers are white */
+  }
+  
+  /* Remove border around the "Rows per page" dropdown */
+  body.dark-theme .MuiTablePagination-root .MuiSelect-root {
+    border: none; /* Remove border from dropdown */
+  }
+  
+  /* Rows per page dropdown background and text should be transparent and white */
+  body.dark-theme .MuiTablePagination-root .MuiSelect-select {
+    background-color: transparent !important; /* Make dropdown transparent */
+    color: white !important; /* Ensure text color is white */
+  }
+  
+  /* Remove the border around pagination */
+  body.dark-theme .MuiTablePagination-root {
+    border: none; /* Remove any border around the pagination */
+    background-color: transparent !important; /* Make background transparent */
+  }
+  
+  
+  /* Custom Red Button for Add Machine */
+  .MuiButton-containedError {
+    background-color: #be171d;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .MuiButton-containedError:hover {
+    background-color: #9e1415;
+  }
+  
+  /* Icon Button Styling */
+  .MuiIconButton-root {
+    margin-right: 0.5rem;
+  }
+  
+  .MuiBox-root {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2rem;
+    }
+  
+    .input-row {
+      flex-direction: column;
+    }
+  }
+  
+  /* Light Mode (Default) */
+  body {
+    color: black; /* Text color for light mode */
+  }
+  
+  body .input-field, body .MuiTableCell-root {
+    color: black; /* Table texts and input fields in light mode */
+  }
+  
+  body .MuiInputBase-root {
+    border: 1px solid black; /* Black border for input fields and checkbox in light mode */
+  }
+  
+  body .MuiCheckbox-root svg {
+    fill: black; /* Checkbox icon color in light mode */
+  }
+  
+  /* Dark Mode */
+  body.dark-theme {
+    color: white; /* Text color for dark mode */
+  }
+  
+  body.dark-theme .input-field, body.dark-theme .MuiTableCell-root {
+    color: white; /* Table texts and input fields in dark mode */
+  }
+  
+  body.dark-theme .MuiInputBase-root {
+    border: 1px solid white; /* White border for input fields in dark mode */
+    background-color: transparent; /* Dark background for input fields */
+  }
+  
+  
+  /* Keep checkbox icon color white in dark mode */
+  body.dark-theme .MuiCheckbox-root svg {
+    fill: white;
+  }
+  
+  /* Fixing text color in MUI input fields in both modes */
+  body.dark-theme .MuiInputBase-root input, /* Input text in dark mode */
+  body .MuiInputBase-root input { /* Input text in light mode */
+    color: inherit; /* Inherit color from body or dark-theme */
+  }
+  
+  /* Fixing label color for TextField */
+  body.dark-theme .MuiInputLabel-root, /* Label in dark mode */
+  body .MuiInputLabel-root { /* Label in light mode */
+    color: inherit; /* Inherit label color */
+  }
+   
+  body.dark-theme .MuiTablePagination-root{
+    color: #ffffff;
+  }
+  

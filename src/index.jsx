@@ -1,14 +1,15 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import './index.css';
-import { BrowserRouter as Router } from "react-router-dom"; // Import BrowserRouter
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom'; // Import BrowserRouter to enable routing
+import './index.css'; // Ensure Tailwind CSS is correctly imported
+import App from './App'; // Import the main App component
 
-// Render the App wrapped in Router
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Router> {/* BrowserRouter wraps the whole app to enable routing */}
+// Create the root element and render the app inside the 'root' div
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <BrowserRouter> {/* Wrap your app with BrowserRouter */}
       <App />
-    </Router>
-  </StrictMode>
+    </BrowserRouter>
+  </React.StrictMode>
 );

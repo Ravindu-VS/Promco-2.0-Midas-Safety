@@ -76,11 +76,16 @@ const Topbar = ({ show }) => {
       {/* Left - Logo */}
       <div className="topbar-left">
         <a href="https://www.midassafety.com/" target="_blank" rel="noopener noreferrer">
-          <img
-            src={`${process.env.PUBLIC_URL}/logo-light.png`}
-            alt="Logo"
-            className="logo"
-          />
+        <img
+          src={`${process.env.PUBLIC_URL}/logo-light.png`}
+          alt="Light Mode Logo"
+          className="logo logo-light" // Show only in light mode
+        />
+        <img
+          src={`${process.env.PUBLIC_URL}/logo-dark.png`}
+          alt="Dark Mode Logo"
+          className="logo logo-dark" // Show only in dark mode
+        />
         </a>
       </div>
 

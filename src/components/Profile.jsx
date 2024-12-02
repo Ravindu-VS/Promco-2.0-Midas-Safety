@@ -63,6 +63,7 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
+            <h2 className="page-title">User Profile</h2>
             {/* Sidebar */}
             <Sidebar profilePicture={userData.profilePicture} /> {/* Pass profile picture to Sidebar */}
 

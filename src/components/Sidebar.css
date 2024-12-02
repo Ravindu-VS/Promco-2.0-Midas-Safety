@@ -1,49 +1,67 @@
 /* Sidebar container */
 .sidebar {
   position: fixed;
-  top: 60px;
+  top: 0;
   left: 0;
-  width: 328px;
-  height: calc(100vh - 60px);
-  background-color: #ffffff;
-  color: white;
+  width: 255px;
+  height: 100vh; /* Adjusted height */
+  background-color: transparent;
+  color: rgb(0, 0, 0);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: auto; /* Allow scrolling within the sidebar */
   z-index: 1;
-  box-shadow: 3px 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   transition: all 0.3s ease;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth; /* Smooth scrolling */
 }
 
-/* Sidebar in collapsed state */
-.sidebar.collapsed {
-  width: 80px;
+
+body.dark-theme .sidebar {
+  color: rgb(255, 255, 255);
+  box-shadow: 0 1px 5px rgba(255, 255, 255, 0.8);
+
+}
+
+
+/* Hide scrollbar for Webkit browsers (Chrome, Safari) */
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 /* User info section */
 .user-info {
-  padding: 1.7rem;
+  padding: 1rem;
   display: flex;
   align-items: center;
-  background-color: #ffffff;
+  background-color: transparent;
   border-bottom: 1px solid #000000;
+  position: relative;
+  top: 70px; /* Adjusted to position below the topbar */
 }
 
 /* Profile icon */
 .profile-icon {
-  height: 3.5rem; /* Adjusted height */
-  width: 3.5rem; /* Adjusted width */
-  background-color:#be171d;
+  height: 3rem; /* Adjusted height */
+  width: 3rem; /* Adjusted width */
+  background-color: #be171d;
   color: rgb(0, 0, 0);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 1.25rem; /* Adjusted font size */
+  font-size: 1.15rem; /* Adjusted font size */
   font-weight: bold;
-  margin-right: 1rem;
+  margin-right: 0.8rem;
   overflow: hidden; /* Ensure content doesn't overflow */
   border: 2px solid black;
+}
+
+body.dark-theme .profile-icon {
+  border-color: #ffffff;
+  color: rgb(255, 255, 255);
 }
 
 /* Profile picture */
@@ -57,30 +75,56 @@
   justify-content: center;
 }
 
+.body.dark-theme .profile-picture {
+  border-color: #ffffff;
+}
+
 /* Welcome text */
 .welcome-text {
-  font-size: 1.29rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #be171d;
 }
 
-.user-email,
+.user-email {
+  color: #000000;
+  font-size: 0.8rem;
+}
+
 .user-role {
   color: #000000;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+}
+
+body.dark-theme .user-email {
+  color: #ffffff;
+}
+
+body.dark-theme .user-role {
+  color: #ffffff;
+  font-size: 0.8rem;
 }
 
 /* Sidebar links */
 .sidebar-links {
-  margin-top: 1px; /* Set the gap between user info and first link to 1px */
+  margin-top: 1px;
   display: flex;
   flex-direction: column;
   gap: 1px;
   color: #000;
+  top: 62px;
 }
 
-.icon{
+body.dark-theme .sidebar-links {
+  color: #ffffff;
+}
+
+.icon {
   color: #000;
+}
+
+body.dark-theme .icon {
+  color: #ffffff;
 }
 
 .sidebar-links a {
@@ -89,9 +133,13 @@
   padding: 15px;
   font-size: 1rem;
   font-weight: 500;
-  color: #000; /* Black color for link text */
+  color: #000;
   text-decoration: none;
   transition: background-color 0.3s ease;
+}
+
+body.dark-theme .sidebar-links a {
+  color: #ffffff;
 }
 
 /* Hover state for sidebar links */
@@ -102,42 +150,36 @@
 /* Active state for sidebar links */
 .sidebar-links a.active {
   background-color: #be171d;
-  color: #fff; /* White text when active */
+  color: #fff;
 }
 
 /* Subsections (nested links) */
 .nested-link {
   padding-left: 40px;
-  color: #000; /* Black color for regular subsections */
+  color: #000;
 }
 
 .nested-link.active {
-  background-color: #444; /* Slightly different background for active subsection */
-  color: #fff; /* White text for active subsection */
+  background-color: #444;
+  color: #fff;
 }
 
-/* Icon color for subsections */
 .subsection-icon {
-  color: #000000;
+  color: #000;
 }
+
+body.dark-theme .subsection-icon {
+  color: #ffffff;
+}
+
 
 .nested-link.active .subsection-icon {
   color: #fff;
 }
 
-/* Hover effect for subsections */
-.nested-link:hover {
-  background-color: #be171d;
-  color: #ffffff;
-}
-
-.nested-link:hover .subsection-icon {
-  color: #ffffff;
-}
-
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .nested-link {
-    padding-left: 20px; /* Reduce padding on small screens */
+    padding-left: 20px;
   }
 }

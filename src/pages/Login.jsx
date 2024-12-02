@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css'; 
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useTheme } from '../hooks/useTheme'; // Ensure this is the correct path
+
+const sampleUsers = [
+  { id: '1', username: 'john_doe', email: 'admin@example.com', role: 'admin', password: 'adminpass', profilePicture: '' },
+  { id: '2', username: 'jane_smith', email: 'manager@example.com', role: 'manager', password: 'managerpass', profilePicture: '' },
+  { id: '3', username: 'michael_jordan', email: 'operator@example.com', role: 'operator', password: 'operatorpass', profilePicture: '' },
+  { id: '4', username: 'emily_clark', email: 'user@example.com', role: 'user', password: 'userpass', profilePicture: '' },
+];
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -10,38 +18,44 @@ function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Fetch user list from local storage
-  const [userList, setUserList] = useState([]);
+  const { theme } = useTheme(); // Get theme from useTheme hook
 
   useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem('users'));
-    if (storedUsers && storedUsers.length > 0) {
-      setUserList(storedUsers);
-    }
-  }, []);
+    console.log('Current theme:', theme); // Check current theme
+  }, [theme]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // Check for matching user credentials in userList
-    const user = userList.find(user => user.email === email && user.password === password);
+    console.log('Logging in with:', { email, password });
 
-    if (user) {
-      // Store user data in local storage
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      redirectToDashboard(user.role);
+    const userRole = await authenticateUser(email, password);
+
+    if (userRole) {
+      // Store user info in localStorage
+      const user = sampleUsers.find((user) => user.email === email);
+      localStorage.setItem("user", JSON.stringify({ email, role: userRole, username: user.username }));
+      redirectToDashboard(userRole);
     } else {
       setError('Invalid email or password');
     }
   };
 
+  const authenticateUser = (email, password) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const user = sampleUsers.find((user) => user.email === email && user.password === password);
+        if (user) {
+          resolve(user.role);
+        } else {
+          resolve(null);
+        }
+      }, 1000);
+    });
+  };
+
   const redirectToDashboard = (role) => {
-    // Navigate to different routes based on role
-    if (role === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/dashboard');
-    }
+    // Redirect user to dashboard based on their role
+    navigate('/dashboard');
   };
 
   return (
@@ -68,7 +82,10 @@ function Login() {
               className="login-input password-input"
               required
             />
-            <span className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+            <span
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+            >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
@@ -76,11 +93,17 @@ function Login() {
         </form>
       </div>
 
+      {/* Logo section */}
       <a href="https://www.midassafety.com/" target="_blank" rel="noopener noreferrer" className="logo-link">
         <img
           src={`${process.env.PUBLIC_URL}/logo-light.png`}
-          alt="Logo"
-          className="logo"
+          alt="Light Mode Logo"
+          className="logo logo-light" // Show only in light mode
+        />
+        <img
+          src={`${process.env.PUBLIC_URL}/logo-dark.png`}
+          alt="Dark Mode Logo"
+          className="logo logo-dark" // Show only in dark mode
         />
       </a>
     </div>

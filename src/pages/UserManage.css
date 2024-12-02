@@ -1,56 +1,51 @@
+/* General Layout */
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: transparent;
+  font-family: 'Roboto', sans-serif;
+}
 
+/* Main content area */
+.user-manage-container {
+  flex: 1;
+  margin-left: 300px; /* Adjust for sidebar width */
+  margin-top: 200px;   /* Adjust for topbar height */
+  padding: 2rem;
+  height: calc(100vh - 64px); /* Full height minus topbar */
+  overflow-y: scroll; /* Allow scrolling */
+  -ms-overflow-style: none;  /* Hide scrollbar for Internet Explorer */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.user-manage-container::-webkit-scrollbar {
+  display: none;  /* Hide scrollbar for Webkit-based browsers (Chrome, Safari) */
+}
+
+/* Button Styles */
 .add-button {
   background-color: #be171d !important;
   color: white !important;
   margin-bottom: 20px;
+  margin-left: 50px;
 }
 
 .add-button:hover {
-  background-color: #be171d !important;
+  background-color: #9e1415 !important; /* Darker shade on hover */
 }
 
-.table-container {
-  background-color: #ffffff;
+/* Increased margin between Add User button and search bar */
+.search-bar {
+  margin-bottom: 30px; /* Increased space between Add User button and search bar */
+  margin-right: 20px;
 }
 
-.table-header-cell {
-  background-color: #be171d;
-  color: white;
-  font-weight: bold;
-}
 
-.table-cell {
-  color: white;
-}
-
-.table-cell,
-.table-header-cell {
-  border-bottom: 1px solid #444;
-}
-
-.dialog-title {
-  color: rgb(0, 0, 0);
-}
-
-.dialog-content {
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
-}
-
-.dialog-input .MuiInputBase-root {
-  color: rgb(0, 0, 0);
-}
-
-.dialog-input .MuiInputLabel-root {
-  color: #000000;
-}
-
-.dialog-input .MuiInputBase-root:after {
-  border-bottom-color: #be171d;
-}
-
-.dialog-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
-  border-bottom-color: #be171d;
+.add-button {
+  margin-bottom: 30px; /* Increased margin below Add User button */
 }
 
 .cancel-button {
@@ -68,12 +63,112 @@
 }
 
 .save-button:hover {
-  background-color: #be171d;
+  background-color: #9e1415;
 }
 
-/* Icon buttons */
+/* Table Container */
+table {
+  margin-top: 20px;
+  background-color: transparent;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9); /* Add shadow */
+  border-radius: 15px; /* Rounded corners */
+  overflow: hidden; /* Prevent overflow from table content */
+}
+
+/* Table Header */
+.table-header-cell {
+  background-color: #be171d;
+  color: white;
+  font-weight: bold;
+}
+
+/* Table Cells */
+.table-cell {
+  color: white;
+}
+
+.table-cell,
+.table-header-cell {
+  border-bottom: 1px solid #444;
+}
+
+/* Table Pagination */
+.MuiTablePagination-root {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  background-color: transparent;
+}
+
+/* Pagination - Dark Mode */
+body.dark-theme .MuiTablePagination-root .MuiIconButton-root {
+  color: white !important;
+}
+
+body.dark-theme .MuiTablePagination-root .MuiIconButton-root svg {
+  fill: white !important;
+}
+
+body.dark-theme .MuiTablePagination-root .MuiTypography-root {
+  color: white !important;
+}
+
+body.dark-theme .MuiTablePagination-root .MuiTypography-body1 {
+  color: white !important;
+}
+
+body.dark-theme .MuiTablePagination-root .MuiSelect-root {
+  border: none !important;
+}
+
+body.dark-theme .MuiTablePagination-root .MuiSelect-select {
+  background-color: transparent !important;
+  color: white !important;
+}
+
+body.dark-theme .MuiTablePagination-root {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Dialog Styles */
+.dialog-title {
+  color: #000000;
+}
+
+.dialog-content {
+  background-color: transparent;
+  color: #000000;
+}
+
+.dialog-input .MuiInputBase-root {
+  color: #000000;
+  background-color: transparent; /* Add background color to make input fields more visible */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px; /* Padding inside input fields */
+  border: 1px solid #ddd; /* Lighter border color */
+}
+
+.dialog-input .MuiInputLabel-root {
+  color: #000000;
+}
+
+.dialog-input .MuiInputBase-root:after {
+  border-bottom-color: #be171d;
+}
+
+.dialog-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
+  border-bottom-color: #be171d;
+}
+
+/* Increase gap between input fields */
+.dialog-input {
+  margin-bottom: 40px; /* More space between each input field */
+}
+
+/* Icon Buttons */
 .MuiIconButton-root {
-  color: rgb(0, 0, 0);
+  color: #000000;
 }
 
 .MuiIconButton-root:hover {
@@ -81,46 +176,47 @@
 }
 
 .action-icon {
-  color: rgb(0, 0, 0);
+  color: #000000;
 }
 
 .action-icon:hover {
   color: #be171d;
 }
 
-/* Dialog styles */
+/* Dialog Styles */
 .MuiDialog-paper {
-  background-color: #ffffff !important;
-  color: rgb(0, 0, 0);
+  background-color: transparent;
+  color: #000000;
 }
 
-/* Styles for the focused label */
+/* Focused Labels */
 .MuiFormLabel-root.Mui-focused {
   color: #be171d !important;
 }
 
-/* Customize select field icon color */
+/* Select Field Icon */
 .MuiSelect-icon {
-  color: rgb(0, 0, 0);
+  color: #000000;
 }
 
-/* Password input styling */
+/* Password Input */
 .dialog-password-input .MuiInputBase-root {
-  color: rgb(0, 0, 0); /* White text in password input */
+  color: #000000;
 }
 
 .dialog-password-input .MuiInputLabel-root {
-  color: #000000; /* Grey label */
+  color: #000000;
 }
 
 .dialog-password-input .MuiInputBase-root:after {
-  border-bottom-color: #be171d; /* Dark red underline for password */
+  border-bottom-color: #be171d;
 }
 
 .dialog-password-input .MuiInputBase-root:hover:not(.Mui-disabled):before {
-  border-bottom-color: #be171d; /* Dark red underline on hover */
+  border-bottom-color: #be171d;
 }
 
+/* Profile Picture */
 .profile-picture {
   width: 50px;
   height: 50px;
@@ -138,16 +234,22 @@
   justify-content: center;
   font-size: 24px;
   font-weight: bold;
-} 
+}
+
+body.dark-theme .profile-initials{
+  background-color: white;
+  color: black;
+}
 
 /* Search Bar Styles */
 .search-bar {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  margin-right: 30px; /* Increased space between the search bar and Add User button */
 }
 
 .search-bar .MuiInputBase-root {
-  background-color: #ffffff;
-  color: rgb(0, 0, 0);
+  background-color: transparent;
+  color: #000000;
   border: 1px solid #000000;
   padding: 8px 12px;
   border-radius: 4px;
@@ -166,24 +268,93 @@
 }
 
 .search-bar .MuiInputBase-input {
-  color: rgb(0, 0, 0);
+  color: #000000;
 }
 
 .search-bar .MuiInputLabel-root.Mui-focused {
   color: #be171d !important;
 }
 
+/* Search Icon */
 .search-icon {
   color: #be171d;
   padding-right: 8px;
   vertical-align: middle;
 }
 
+/* Clear Icon */
 .clear-icon {
   color: #000000;
   cursor: pointer;
 }
 
 .clear-icon:hover {
-  color: #000000;
+  color: #be171d; /* Match hover color to theme */
+}
+
+/* Table Styling for both Light and Dark Modes */
+body .table-frame {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 15px; /* Rounded corners */
+}
+
+body.dark-theme .table-frame {
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5); /* White shadow in dark mode */
+}
+
+/* Table Cell Border Radius */
+body .table-frame th:first-child,
+body .table-frame td:first-child {
+  border-top-left-radius: 15px;
+}
+
+body .table-frame th:last-child,
+body .table-frame td:last-child {
+  border-top-right-radius: 15px;
+} 
+/* Edit, Delete, View Button Styles */
+.edit-button,
+.delete-button,
+.view-button {
+  color: #ffffff; /* Default text color for all buttons */
+  background-color: #444; /* Default background color for dark mode */
+  border: 1px solid #444; /* Border color */
+  padding: 10px 15px; /* Padding inside buttons */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.edit-button:hover,
+.delete-button:hover,
+.view-button:hover {
+  background-color: #be171d; /* Hover background color */
+  border-color: #be171d; /* Hover border color */
+}
+
+/* Dark Mode Adjustments for Edit, Delete, View buttons */
+body.dark-theme .edit-button,
+body.dark-theme .delete-button,
+body.dark-theme .view-button {
+  color: white !important; /* Ensure button text is white in dark mode */
+  background-color: #555 !important; /* Slightly lighter dark background */
+  border: 1px solid #666; /* Slightly lighter border for dark mode */
+}
+
+body.dark-theme .edit-button:hover,
+body.dark-theme .delete-button:hover,
+body.dark-theme .view-button:hover {
+  background-color: #9e1415 !important; /* Darker red on hover for contrast */
+  border-color: #9e1415 !important;
+}
+
+/* Icon Buttons in Edit, Delete, View (for dark mode) */
+body.dark-theme .MuiIconButton-root.edit-button,
+body.dark-theme .MuiIconButton-root.delete-button,
+body.dark-theme .MuiIconButton-root.view-button {
+  color: #be171d !important; /* Ensure icons are white in dark mode */
+}
+
+body.dark-theme .MuiIconButton-root.edit-button:hover,
+body.dark-theme .MuiIconButton-root.delete-button:hover,
+body.dark-theme .MuiIconButton-root.view-button:hover {
+  color: #be171d !important; /* Hover color for icons */
 }

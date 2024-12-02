@@ -1,59 +1,114 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  IconButton,
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Box } from "@mui/system";
+import { styled } from "@mui/material/styles";
+import "./Table.css";
 
-const Machine = () => {
-  // Initial state for the form inputs and machines list
-  const [machineData, setMachineData] = useState({
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
+
+const MachineTable = () => {
+  const [machines, setMachines] = useState([]);
+  const [newMachine, setNewMachine] = useState({
     machine: "",
     machineType: "",
     sapResource: "",
     hasDeleted: false,
     plantDepld: "",
   });
+  const [editingMachine, setEditingMachine] = useState(null); // To track the machine being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [machines, setMachines] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the machine being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const machinesPerPage = 10; // Number of machines to display per page
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        machine: "Machine 1",
+        machineType: "Type A",
+        sapResource: "SAP001",
+        hasDeleted: false,
+        plantDepld: "Plant 1",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+      {
+        machine: "Machine 2",
+        machineType: "Type B",
+        sapResource: "SAP002",
+        hasDeleted: false,
+        plantDepld: "Plant 2",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+    ];
+    setMachines(initialData);
+  }, []);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setMachineData({
-      ...machineData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const currentTime = new Date().toISOString(); // Get current time in ISO format
-
-    if (editIndex !== null) {
-      // Editing an existing machine
-      const updatedMachines = machines.map((machine, index) => 
-        index === editIndex 
-          ? { ...machineData, modifiedTime: currentTime, createdTime: machine.createdTime } 
-          : machine
-      );
-      setMachines(updatedMachines);
-      setEditIndex(null); // Reset edit mode
-    } else {
-      // Adding a new machine
-      setMachines([
-        ...machines,
-        { 
-          ...machineData,
-          createdTime: currentTime,
-          modifiedTime: currentTime 
-        }
-      ]);
+  const handleAddMachine = () => {
+    // Check if any required field is empty (except for hasDeleted, which is a boolean)
+    if (
+      Object.entries(newMachine).some(
+        ([key, value]) =>
+          (key !== "hasDeleted" && typeof value === "string" && value.trim() === "") ||
+          (key === "hasDeleted" && value === null)
+      )
+    ) {
+      console.log("Please fill all fields before adding.");
+      return;
     }
 
-    // Reset the form after submission
-    setMachineData({
+    const newMachineData = {
+      ...newMachine,
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+    };
+
+    // If editing, update the existing machine
+    if (editingMachine) {
+      const updatedMachines = machines.map((machine) =>
+        machine === editingMachine ? { ...newMachineData } : machine
+      );
+      setMachines(updatedMachines);
+      setEditingMachine(null); // Stop editing after save
+    } else {
+      // Add a new machine to the list
+      setMachines((prevMachines) => [...prevMachines, newMachineData]);
+    }
+
+    resetNewMachine(); // Clear input fields after adding or saving
+  };
+
+  const handleEditMachine = (machine) => {
+    setEditingMachine(machine);
+    setNewMachine({ ...machine }); // Populate the form fields with the current machine's data
+  };
+
+  const handleDeleteMachine = (machineIndex) => {
+    setMachines((prevMachines) =>
+      prevMachines.filter((_, index) => index !== machineIndex)
+    );
+  };
+
+  const resetNewMachine = () => {
+    setNewMachine({
       machine: "",
       machineType: "",
       sapResource: "",
@@ -62,130 +117,141 @@ const Machine = () => {
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const machineToEdit = machines[index];
-    setMachineData(machineToEdit);
-    setEditIndex(index); // Set the index to track which machine is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastMachineIndex = currentPage * machinesPerPage;
-  const firstMachineIndex = lastMachineIndex - machinesPerPage;
-  const currentMachines = machines.slice(firstMachineIndex, lastMachineIndex);
-
-  const totalPages = Math.ceil(machines.length / machinesPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleCheckboxChange = (event) => {
+    setNewMachine({ ...newMachine, hasDeleted: event.target.checked });
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Machine:</label>
-          <input
-            type="text"
-            name="machine"
-            value={machineData.machine}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Machine Type:</label>
-          <input
-            type="text"
-            name="machineType"
-            value={machineData.machineType}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>SAP Resource:</label>
-          <input
-            type="text"
-            name="sapResource"
-            value={machineData.sapResource}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Has Deleted:</label>
-          <input
-            type="checkbox"
-            name="hasDeleted"
-            checked={machineData.hasDeleted}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>Plant Depld:</label>
-          <input
-            type="text"
-            name="plantDepld"
-            value={machineData.plantDepld}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Machine" : "Add Machine"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Machine Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Machine</th>
-            <th>Machine Type</th>
-            <th>SAP Resource</th>
-            <th>Has Deleted</th>
-            <th>Created Time</th>
-            <th>Modified Time</th>
-            <th>Plant Depld</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentMachines.map((machine, index) => (
-            <tr key={index}>
-              <td>{machine.machine}</td>
-              <td>{machine.machineType}</td>
-              <td>{machine.sapResource}</td>
-              <td>{machine.hasDeleted ? "Yes" : "No"}</td>
-              <td>{new Date(machine.createdTime).toLocaleString()}</td>
-              <td>{new Date(machine.modifiedTime).toLocaleString()}</td>
-              <td>{machine.plantDepld}</td>
-              <td>
-                <button onClick={() => handleEdit(firstMachineIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+      {/* Form for adding/editing machines */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="Machine"
+            variant="outlined"
+            value={newMachine.machine}
+            onChange={(e) =>
+              setNewMachine({ ...newMachine, machine: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Machine Type"
+            variant="outlined"
+            value={newMachine.machineType}
+            onChange={(e) =>
+              setNewMachine({ ...newMachine, machineType: e.target.value })
+            }
+            className="input-field"
+          />
+          {/* Has Deleted Checkbox */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newMachine.hasDeleted}
+                onChange={handleCheckboxChange}
+                name="hasDeleted"
+                color="error"
+              />
+            }
+            label="Has Deleted"
+          />
+          <TextField
+            label="SAP Resource"
+            variant="outlined"
+            value={newMachine.sapResource}
+            onChange={(e) =>
+              setNewMachine({ ...newMachine, sapResource: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Plant Depld"
+            variant="outlined"
+            value={newMachine.plantDepld}
+            onChange={(e) =>
+              setNewMachine({ ...newMachine, plantDepld: e.target.value })
+            }
+            className="input-field"
+          />
+        </div>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Machine"
+          onClick={handleAddMachine}
+        >
+          {editingMachine ? "Save Changes" : "Add Machine"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Machine</StyledTableCell>
+            <StyledTableCell>Machine Type</StyledTableCell>
+            <StyledTableCell>SAP Resource</StyledTableCell>
+            <StyledTableCell>Has Deleted</StyledTableCell>
+            <StyledTableCell>Created Time</StyledTableCell>
+            <StyledTableCell>Modified Time</StyledTableCell>
+            <StyledTableCell>Plant Depld</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {machines
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((machine, index) => (
+              <TableRow key={index}>
+                <TableCell>{machine.machine}</TableCell>
+                <TableCell>{machine.machineType}</TableCell>
+                <TableCell>{machine.sapResource}</TableCell>
+                <TableCell>{machine.hasDeleted ? "Yes" : "No"}</TableCell>
+                <TableCell>{new Date(machine.createdTime).toLocaleString()}</TableCell>
+                <TableCell>{new Date(machine.modifiedTime).toLocaleString()}</TableCell>
+                <TableCell>{machine.plantDepld}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeleteMachine(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditMachine(machine)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={machines.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };
 
-export default Machine;
+export default MachineTable;

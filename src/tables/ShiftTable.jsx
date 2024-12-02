@@ -1,165 +1,211 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  IconButton,
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Box } from "@mui/system";
+import { styled } from "@mui/material/styles";
+import "./Table.css";
+
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
 
 const ShiftTable = () => {
-  // Initial state for the form inputs and shifts list
-  const [shiftData, setShiftData] = useState({
-    shift: "",
-    plantDepId: "",
-    hasDeleted: false,
-    createdTime: "",
-    modifiedTime: "",
-  });
-
   const [shifts, setShifts] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the shift being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const shiftsPerPage = 10; // Number of shifts to display per page
+  const [newShift, setNewShift] = useState({
+    shift: "",
+    plantDepartmentId: "",
+    hasDeleted: false,
+  });
+  const [editingShift, setEditingShift] = useState(null); // To track the shift being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setShiftData({
-      ...shiftData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        shift: "Morning",
+        plantDepartmentId: "PD01",
+        hasDeleted: false,
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+    ];
+    setShifts(initialData);
+  }, []);
 
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const currentTime = new Date().toISOString(); // Get current time in ISO format
-
-    if (editIndex !== null) {
-      // Editing an existing shift
-      const updatedShifts = shifts.map((shift, index) => 
-        index === editIndex 
-          ? { ...shiftData, modifiedTime: currentTime, createdTime: shift.createdTime } 
-          : shift
-      );
-      setShifts(updatedShifts);
-      setEditIndex(null); // Reset edit mode
-    } else {
-      // Adding a new shift
-      setShifts([
-        ...shifts,
-        { 
-          ...shiftData,
-          createdTime: currentTime,
-          modifiedTime: currentTime 
-        }
-      ]);
+  const handleAddShift = () => {
+    // Check if any required field is empty
+    if (newShift.shift.trim() === "" || newShift.plantDepartmentId.trim() === "") {
+      console.log("Please fill all fields before adding.");
+      return;
     }
 
-    // Reset the form after submission
-    setShiftData({
+    const newShiftData = {
+      ...newShift,
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+    };
+
+    // If editing, update the existing shift
+    if (editingShift) {
+      const updatedShifts = shifts.map((shift) =>
+        shift === editingShift ? { ...newShiftData } : shift
+      );
+      setShifts(updatedShifts);
+      setEditingShift(null); // Stop editing after save
+    } else {
+      // Add a new shift to the list
+      setShifts((prevShifts) => [...prevShifts, newShiftData]);
+    }
+
+    resetNewShift(); // Clear input fields after adding or saving
+  };
+
+  const handleEditShift = (shift) => {
+    setEditingShift(shift);
+    setNewShift({ ...shift }); // Populate the form fields with the current shift's data
+  };
+
+  const handleDeleteShift = (shiftIndex) => {
+    setShifts((prevShifts) =>
+      prevShifts.filter((_, index) => index !== shiftIndex)
+    );
+  };
+
+  const resetNewShift = () => {
+    setNewShift({
       shift: "",
-      plantDepId: "",
+      plantDepartmentId: "",
       hasDeleted: false,
-      createdTime: "",
-      modifiedTime: "",
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const shiftToEdit = shifts[index];
-    setShiftData(shiftToEdit);
-    setEditIndex(index); // Set the index to track which shift is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastShiftIndex = currentPage * shiftsPerPage;
-  const firstShiftIndex = lastShiftIndex - shiftsPerPage;
-  const currentShifts = shifts.slice(firstShiftIndex, lastShiftIndex);
-
-  const totalPages = Math.ceil(shifts.length / shiftsPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleHasDeletedChange = (event) => {
+    setNewShift({ ...newShift, hasDeleted: event.target.checked });
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Shift:</label>
-          <input
-            type="text"
-            name="shift"
-            value={shiftData.shift}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Plant Department ID:</label>
-          <input
-            type="text"
-            name="plantDepId"
-            value={shiftData.plantDepId}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Has Deleted:</label>
-          <input
-            type="checkbox"
-            name="hasDeleted"
-            checked={shiftData.hasDeleted}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Shift" : "Add Shift"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Shift Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Shift</th>
-            <th>Plant Department ID</th>
-            <th>Has Deleted</th>
-            <th>Created Time</th>
-            <th>Modified Time</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentShifts.map((shift, index) => (
-            <tr key={index}>
-              <td>{shift.shift}</td>
-              <td>{shift.plantDepId}</td>
-              <td>{shift.hasDeleted ? "Yes" : "No"}</td>
-              <td>{new Date(shift.createdTime).toLocaleString()}</td>
-              <td>{new Date(shift.modifiedTime).toLocaleString()}</td>
-              <td>
-                <button onClick={() => handleEdit(firstShiftIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Form for adding/editing shifts */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="Shift"
+            variant="outlined"
+            value={newShift.shift}
+            onChange={(e) =>
+              setNewShift({ ...newShift, shift: e.target.value })
+            }
+            className="input-field"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newShift.hasDeleted}
+                onChange={handleHasDeletedChange}
+                color="error"
+              />
+            }
+            label="Has Deleted"
+          />
+          <TextField
+            label="Plant Department ID"
+            variant="outlined"
+            value={newShift.plantDepartmentId}
+            onChange={(e) =>
+              setNewShift({ ...newShift, plantDepartmentId: e.target.value })
+            }
+            className="input-field"
+          />
+        </div>
 
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Shift"
+          onClick={handleAddShift}
+        >
+          {editingShift ? "Save Changes" : "Add Shift"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Shift</StyledTableCell>
+            <StyledTableCell>Plant Department ID</StyledTableCell>
+            <StyledTableCell>Has Deleted</StyledTableCell>
+            <StyledTableCell>Created Time</StyledTableCell>
+            <StyledTableCell>Modified Time</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {shifts
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((shift, index) => (
+              <TableRow key={index}>
+                <TableCell>{shift.shift}</TableCell>
+                <TableCell>{shift.plantDepartmentId}</TableCell>
+                <TableCell>{shift.hasDeleted ? "Yes" : "No"}</TableCell>
+                <TableCell>{shift.createdTime}</TableCell>
+                <TableCell>{shift.modifiedTime}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeleteShift(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditShift(shift)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={shifts.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

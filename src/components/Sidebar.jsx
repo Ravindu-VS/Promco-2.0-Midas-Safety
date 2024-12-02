@@ -31,7 +31,6 @@ const Sidebar = () => {
     { path: "/parameter-qualified-value", label: "Parameter Qualified Value" },
     { path: "/plant-department", label: "Plant Department" },
     { path: "/plant-dept-abp-user", label: "Plant Dept Abp User" },
-    { path: "/section-template", label: "Section Template" },
     { path: "/shift", label: "Shift" },
     { path: "/sub-section", label: "Sub Section" },
     { path: "/tolerance", label: "Tolerance" },

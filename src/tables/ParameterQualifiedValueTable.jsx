@@ -1,214 +1,273 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+  IconButton,
+  Button,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { styled } from "@mui/material/styles";
+import { Box } from "@mui/system";
+import "./Table.css";
+
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
 
 const ParameterQualifiedValueTable = () => {
-  // Initial state for the form inputs and parameter qualified values list
-  const [parameterQualifiedValueData, setParameterQualifiedValueData] = useState({
+  const [qualifiedValues, setQualifiedValues] = useState([]);
+  const [newQualifiedValue, setNewQualifiedValue] = useState({
     id: "",
     plantDepld: "",
     materialCode: "",
     parameter: "",
     minValue: "",
-    target: "",
+    targetValue: "",
     maxValue: "",
   });
+  const [editingQualifiedValue, setEditingQualifiedValue] = useState(null); // To track the qualified value being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [parameterQualifiedValues, setParameterQualifiedValues] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the parameter qualified value being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const parameterQualifiedValuesPerPage = 10; // Number of parameter qualified values to display per page
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        id: "1",
+        plantDepld: "Plant A",
+        materialCode: "M001",
+        parameter: "Temperature",
+        minValue: "20",
+        targetValue: "50",
+        maxValue: "80",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+      {
+        id: "2",
+        plantDepld: "Plant B",
+        materialCode: "M002",
+        parameter: "Pressure",
+        minValue: "5",
+        targetValue: "50",
+        maxValue: "100",
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+      },
+    ];
+    setQualifiedValues(initialData);
+  }, []);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setParameterQualifiedValueData({
-      ...parameterQualifiedValueData,
-      [name]: value,
-    });
-  };
+  const handleAddQualifiedValue = () => {
+    // Check if any required field is empty
+    if (
+      Object.entries(newQualifiedValue).some(
+        ([key, value]) => value.trim() === ""
+      )
+    ) {
+      console.log("Please fill all fields before adding.");
+      return;
+    }
 
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const currentTime = new Date().toISOString(); // Get current time in ISO format
+    const newQualifiedValueData = {
+      ...newQualifiedValue,
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+    };
 
-    if (editIndex !== null) {
-      // Editing an existing parameter qualified value
-      const updatedParameterQualifiedValues = parameterQualifiedValues.map((value, index) => 
-        index === editIndex 
-          ? { ...parameterQualifiedValueData, modifiedTime: currentTime, createdTime: value.createdTime } 
-          : value
+    // If editing, update the existing qualified value
+    if (editingQualifiedValue) {
+      const updatedQualifiedValues = qualifiedValues.map((value) =>
+        value === editingQualifiedValue ? { ...newQualifiedValueData } : value
       );
-      setParameterQualifiedValues(updatedParameterQualifiedValues);
-      setEditIndex(null); // Reset edit mode
+      setQualifiedValues(updatedQualifiedValues);
+      setEditingQualifiedValue(null); // Stop editing after save
     } else {
-      // Adding a new parameter qualified value
-      setParameterQualifiedValues([
-        ...parameterQualifiedValues,
-        { 
-          ...parameterQualifiedValueData,
-          createdTime: currentTime,
-          modifiedTime: currentTime 
-        }
+      // Add a new qualified value to the list
+      setQualifiedValues((prevQualifiedValues) => [
+        ...prevQualifiedValues,
+        newQualifiedValueData,
       ]);
     }
 
-    // Reset the form after submission
-    setParameterQualifiedValueData({
+    resetNewQualifiedValue(); // Clear input fields after adding or saving
+  };
+
+  const handleEditQualifiedValue = (qualifiedValue) => {
+    setEditingQualifiedValue(qualifiedValue);
+    setNewQualifiedValue({ ...qualifiedValue }); // Populate the form fields with the current value's data
+  };
+
+  const handleDeleteQualifiedValue = (qualifiedValueIndex) => {
+    setQualifiedValues((prevQualifiedValues) =>
+      prevQualifiedValues.filter((_, index) => index !== qualifiedValueIndex)
+    );
+  };
+
+  const resetNewQualifiedValue = () => {
+    setNewQualifiedValue({
       id: "",
       plantDepld: "",
       materialCode: "",
       parameter: "",
       minValue: "",
-      target: "",
+      targetValue: "",
       maxValue: "",
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const parameterQualifiedValueToEdit = parameterQualifiedValues[index];
-    setParameterQualifiedValueData(parameterQualifiedValueToEdit);
-    setEditIndex(index); // Set the index to track which parameter qualified value is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastParameterQualifiedValueIndex = currentPage * parameterQualifiedValuesPerPage;
-  const firstParameterQualifiedValueIndex = lastParameterQualifiedValueIndex - parameterQualifiedValuesPerPage;
-  const currentParameterQualifiedValues = parameterQualifiedValues.slice(firstParameterQualifiedValueIndex, lastParameterQualifiedValueIndex);
-
-  const totalPages = Math.ceil(parameterQualifiedValues.length / parameterQualifiedValuesPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>ID:</label>
-          <input
-            type="text"
-            name="id"
-            value={parameterQualifiedValueData.id}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Plant Depld:</label>
-          <input
-            type="text"
-            name="plantDepld"
-            value={parameterQualifiedValueData.plantDepld}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Material Code:</label>
-          <input
-            type="text"
-            name="materialCode"
-            value={parameterQualifiedValueData.materialCode}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Parameter:</label>
-          <input
-            type="text"
-            name="parameter"
-            value={parameterQualifiedValueData.parameter}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Min Value:</label>
-          <input
-            type="number"
-            name="minValue"
-            value={parameterQualifiedValueData.minValue}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Target Value:</label>
-          <input
-            type="number"
-            name="target"
-            value={parameterQualifiedValueData.target}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Max Value:</label>
-          <input
-            type="number"
-            name="maxValue"
-            value={parameterQualifiedValueData.maxValue}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Parameter Qualified Value" : "Add Parameter Qualified Value"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Parameter Qualified Value Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Plant Depld</th>
-            <th>Material Code</th>
-            <th>Parameter</th>
-            <th>Min Value</th>
-            <th>Target Value</th>
-            <th>Max Value</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentParameterQualifiedValues.map((value, index) => (
-            <tr key={index}>
-              <td>{value.id}</td>
-              <td>{value.plantDepld}</td>
-              <td>{value.materialCode}</td>
-              <td>{value.parameter}</td>
-              <td>{value.minValue}</td>
-              <td>{value.target}</td>
-              <td>{value.maxValue}</td>
-              <td>
-                <button onClick={() => handleEdit(firstParameterQualifiedValueIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+      {/* Form for adding/editing qualified values */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="ID"
+            variant="outlined"
+            value={newQualifiedValue.id}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, id: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Plant Depld"
+            variant="outlined"
+            value={newQualifiedValue.plantDepld}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, plantDepld: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Material Code"
+            variant="outlined"
+            value={newQualifiedValue.materialCode}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, materialCode: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Parameter"
+            variant="outlined"
+            value={newQualifiedValue.parameter}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, parameter: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Min Value"
+            variant="outlined"
+            value={newQualifiedValue.minValue}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, minValue: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Target Value"
+            variant="outlined"
+            value={newQualifiedValue.targetValue}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, targetValue: e.target.value })
+            }
+            className="input-field"
+          />
+          <TextField
+            label="Max Value"
+            variant="outlined"
+            value={newQualifiedValue.maxValue}
+            onChange={(e) =>
+              setNewQualifiedValue({ ...newQualifiedValue, maxValue: e.target.value })
+            }
+            className="input-field"
+          />
+        </div>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Qualified Value"
+          onClick={handleAddQualifiedValue}
+        >
+          {editingQualifiedValue ? "Save Changes" : "Add Qualified Value"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>ID</StyledTableCell>
+            <StyledTableCell>Plant Depld</StyledTableCell>
+            <StyledTableCell>Material Code</StyledTableCell>
+            <StyledTableCell>Parameter</StyledTableCell>
+            <StyledTableCell>Min Value</StyledTableCell>
+            <StyledTableCell>Target Value</StyledTableCell>
+            <StyledTableCell>Max Value</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {qualifiedValues
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((qualifiedValue, index) => (
+              <TableRow key={index}>
+                <TableCell>{qualifiedValue.id}</TableCell>
+                <TableCell>{qualifiedValue.plantDepld}</TableCell>
+                <TableCell>{qualifiedValue.materialCode}</TableCell>
+                <TableCell>{qualifiedValue.parameter}</TableCell>
+                <TableCell>{qualifiedValue.minValue}</TableCell>
+                <TableCell>{qualifiedValue.targetValue}</TableCell>
+                <TableCell>{qualifiedValue.maxValue}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeleteQualifiedValue(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditQualifiedValue(qualifiedValue)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={qualifiedValues.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

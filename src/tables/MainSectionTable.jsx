@@ -1,177 +1,220 @@
-import React, { useState } from "react";
-import './Table.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+  TextField,
+  IconButton,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  Box,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { styled } from "@mui/material/styles";
+import "./Table.css";
 
-const MainSectionTable = () => {
-  // Initial state for the form inputs and main sections list
-  const [mainSectionData, setMainSectionData] = useState({
-    mainSection: "",
-    mainSectionName: "",
+// Create a styled TableCell for the header
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  color: theme.palette.common.black, // Black text color
+  fontWeight: "bold",
+}));
+
+const MachineTypeTable = () => {
+  const [machineTypes, setMachineTypes] = useState([]);
+  const [newMachineType, setNewMachineType] = useState({
+    machineType: "",
     hasDeleted: false,
     plantDepld: "",
   });
+  const [editingMachineType, setEditingMachineType] = useState(null); // To track the machine type being edited
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [mainSections, setMainSections] = useState([]);
-  const [editIndex, setEditIndex] = useState(null); // To track the main section being edited
-  const [currentPage, setCurrentPage] = useState(1); // Track the current page
-  const mainSectionsPerPage = 10; // Number of main sections to display per page
+  useEffect(() => {
+    // Simulated initial data (can be removed in production)
+    const initialData = [
+      {
+        machineType: "KNT",
+        hasDeleted: false,
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+        plantDepld: "Plant A",
+      },
+      {
+        machineType: "PMP",
+        hasDeleted: false,
+        createdTime: new Date().toISOString(),
+        modifiedTime: new Date().toISOString(),
+        plantDepld: "Plant B",
+      },
+    ];
+    setMachineTypes(initialData);
+  }, []);
 
-  // Function to handle form inputs
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setMainSectionData({
-      ...mainSectionData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  // Function to handle form submission (adding or editing)
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const currentTime = new Date().toISOString(); // Get current time in ISO format
-
-    if (editIndex !== null) {
-      // Editing an existing main section
-      const updatedMainSections = mainSections.map((mainSection, index) => 
-        index === editIndex 
-          ? { ...mainSectionData, modifiedTime: currentTime, createdTime: mainSection.createdTime } 
-          : mainSection
-      );
-      setMainSections(updatedMainSections);
-      setEditIndex(null); // Reset edit mode
-    } else {
-      // Adding a new main section
-      setMainSections([
-        ...mainSections,
-        { 
-          ...mainSectionData,
-          createdTime: currentTime,
-          modifiedTime: currentTime 
-        }
-      ]);
+  const handleAddMachineType = () => {
+    // Check if any required field is empty
+    if (
+      Object.entries(newMachineType).some(
+        ([key, value]) => key !== "hasDeleted" && value.trim() === ""
+      )
+    ) {
+      console.log("Please fill all fields before adding.");
+      return;
     }
 
-    // Reset the form after submission
-    setMainSectionData({
-      mainSection: "",
-      mainSectionName: "",
+    const newMachineTypeData = {
+      ...newMachineType,
+      createdTime: new Date().toISOString(),
+      modifiedTime: new Date().toISOString(),
+    };
+
+    // If editing, update the existing machine type
+    if (editingMachineType) {
+      const updatedMachineTypes = machineTypes.map((machineType) =>
+        machineType === editingMachineType ? { ...newMachineTypeData } : machineType
+      );
+      setMachineTypes(updatedMachineTypes);
+      setEditingMachineType(null); // Stop editing after save
+    } else {
+      // Add a new machine type to the list
+      setMachineTypes((prevMachineTypes) => [...prevMachineTypes, newMachineTypeData]);
+    }
+
+    resetNewMachineType(); // Clear input fields after adding or saving
+  };
+
+  const handleEditMachineType = (machineType) => {
+    setEditingMachineType(machineType);
+    setNewMachineType({ ...machineType }); // Populate the form fields with the current machine type's data
+  };
+
+  const handleDeleteMachineType = (machineIndex) => {
+    setMachineTypes((prevMachineTypes) =>
+      prevMachineTypes.filter((_, index) => index !== machineIndex)
+    );
+  };
+
+  const resetNewMachineType = () => {
+    setNewMachineType({
+      machineType: "",
       hasDeleted: false,
       plantDepld: "",
     });
   };
 
-  // Function to handle edit
-  const handleEdit = (index) => {
-    const mainSectionToEdit = mainSections[index];
-    setMainSectionData(mainSectionToEdit);
-    setEditIndex(index); // Set the index to track which main section is being edited
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  // Pagination functions
-  const lastMainSectionIndex = currentPage * mainSectionsPerPage;
-  const firstMainSectionIndex = lastMainSectionIndex - mainSectionsPerPage;
-  const currentMainSections = mainSections.slice(firstMainSectionIndex, lastMainSectionIndex);
-
-  const totalPages = Math.ceil(mainSections.length / mainSectionsPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   return (
-    <div>
-      {/* Form section */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Main Section:</label>
-          <input
-            type="text"
-            name="mainSection"
-            value={mainSectionData.mainSection}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Main Section Name:</label>
-          <input
-            type="text"
-            name="mainSectionName"
-            value={mainSectionData.mainSectionName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Has Deleted:</label>
-          <input
-            type="checkbox"
-            name="hasDeleted"
-            checked={mainSectionData.hasDeleted}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label>Plant Depld:</label>
-          <input
-            type="text"
-            name="plantDepld"
-            value={mainSectionData.plantDepld}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">{editIndex !== null ? "Update Main Section" : "Add Main Section"}</button>
-      </form>
+    <div className="table-main-content">
+      <h2 className="page-title">Machine Type Table</h2>
 
-      {/* Table section */}
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Main Section</th>
-            <th>Main Section Name</th>
-            <th>Has Deleted</th>
-            <th>Created Time</th>
-            <th>Modified Time</th>
-            <th>Plant Depld</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentMainSections.map((mainSection, index) => (
-            <tr key={index}>
-              <td>{mainSection.mainSection}</td>
-              <td>{mainSection.mainSectionName}</td>
-              <td>{mainSection.hasDeleted ? "Yes" : "No"}</td>
-              <td>{new Date(mainSection.createdTime).toLocaleString()}</td>
-              <td>{new Date(mainSection.modifiedTime).toLocaleString()}</td>
-              <td>{mainSection.plantDepld}</td>
-              <td>
-                <button onClick={() => handleEdit(firstMainSectionIndex + index)}>🖉 Edit</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <button onClick={handlePrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
+      {/* Form for adding/editing machine types */}
+      <div className="form-container">
+        <div className="input-row">
+          <TextField
+            label="Machine Type"
+            variant="outlined"
+            value={newMachineType.machineType}
+            onChange={(e) =>
+              setNewMachineType({ ...newMachineType, machineType: e.target.value })
+            }
+            className="input-field"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={newMachineType.hasDeleted}
+                onChange={(e) =>
+                  setNewMachineType({ ...newMachineType, hasDeleted: e.target.checked })
+                }
+              />
+            }
+            label="Has Deleted"
+          />
+          <TextField
+            label="Plant Depld"
+            variant="outlined"
+            value={newMachineType.plantDepld}
+            onChange={(e) =>
+              setNewMachineType({ ...newMachineType, plantDepld: e.target.value })
+            }
+            className="input-field"
+          />
+        </div>
+        <Button
+          variant="contained"
+          color="error" // Red button for "Add Machine Type"
+          onClick={handleAddMachineType}
+        >
+          {editingMachineType ? "Save Changes" : "Add Machine Type"}
+        </Button>
       </div>
+
+      <Table className="table-frame">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Machine Type</StyledTableCell>
+            <StyledTableCell>Has Deleted</StyledTableCell>
+            <StyledTableCell>Created Time</StyledTableCell>
+            <StyledTableCell>Modified Time</StyledTableCell>
+            <StyledTableCell>Plant Depld</StyledTableCell>
+            <StyledTableCell>Actions</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {machineTypes
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((machineType, index) => (
+              <TableRow key={index}>
+                <TableCell>{machineType.machineType}</TableCell>
+                <TableCell>{machineType.hasDeleted ? "Yes" : "No"}</TableCell>
+                <TableCell>{new Date(machineType.createdTime).toLocaleString()}</TableCell>
+                <TableCell>{new Date(machineType.modifiedTime).toLocaleString()}</TableCell>
+                <TableCell>{machineType.plantDepld}</TableCell>
+                <TableCell>
+                  <Box display="flex" alignItems="center">
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleDeleteMachineType(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      style={{ color: "#be171d" }}
+                      onClick={() => handleEditMachineType(machineType)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+        </TableBody>
+      </Table>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={machineTypes.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };
 
-export default MainSectionTable;
+export default MachineTypeTable;
