@@ -1,41 +1,143 @@
-🚀 Digitizing Industrial Maintenance – Midas Safety Web Application
+# Promco 2.0 - Midas Safety Web Application
 
-Managing machine maintenance in large-scale manufacturing is a challenge. Midas Safety, a global glove manufacturer, needed a solution to streamline their fault reporting and maintenance tracking. That’s where our custom web application came in! 💡
+🚀 Digitizing Industrial Maintenance – A comprehensive web application for managing machine maintenance in large-scale manufacturing.
 
-🔹 Key Features:
+## Project Overview
 
-✅ Machine Data Management – Organized and stored machine details.
+This application helps Midas Safety, a global glove manufacturer, streamline their fault reporting and maintenance tracking processes. It transitions from manual logs to a smart digital system, significantly improving efficiency and response times.
 
-✅ Fault Reporting System – Instant issue reporting for faster maintenance.
+## Key Features
 
-✅ Real-Time Dashboard – Live updates on reported faults and repairs.
+- **Machine Data Management** – Organized and stored machine details.
+- **Fault Reporting System** – Instant issue reporting for faster maintenance.
+- **Real-Time Dashboard** – Live updates on reported faults and repairs.
+- **User Role Management** – Controlled data access for security.
+- **Data Analytics & Reports** – Identified recurring issues for proactive maintenance.
 
-✅ User Role Management – Controlled data access for security.
+## Tech Stack
 
-✅ Data Analytics & Reports – Identified recurring issues for proactive maintenance.
+### Frontend
+- React.js
+- Material UI
+- Chart.js
+- Tailwind CSS
 
-🔬 Tech Stack:
+### Backend
+- Node.js
+- Express.js
+- JSON Web Tokens (JWT) for authentication
 
-🖥️ Frontend: React.js
+### Database
+- Microsoft SQL Server (MSSQL)
 
-⚙️ Backend: Node.js, Express.js
+## Project Structure
 
-💾 Database: MSSQL
+The project is organized into two main directories:
 
-This project was a game-changer, transitioning from manual logs to a smart digital system, significantly improving efficiency and response times! 🚀
+```
+/frontend   # React application
+/backend    # Node.js + Express API server
+```
 
-📅 Project Date: January 2024 - December 2024
+## Getting Started
 
-👨‍💻 Team Members:
+### Prerequisites
 
-✅ Ravindu Vinusha
+- Node.js (v14+)
+- Microsoft SQL Server
+- npm or yarn
 
-✅ Rumeth Jayasinghe
+### Setting Up the Database
 
-✅ Gimhani Tharushika
+1. Create a database in MSSQL
+2. Run the SQL script in `/backend/scripts/init-database.sql`
 
-✅ Rashmi Rathnayaka
+### Backend Setup
 
+1. Navigate to the backend directory:
+   ```
+   cd backend
+   ```
 
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-🔗 #WebDevelopment #Automation #Manufacturing #ReactJS #NodeJS #MSSQL  #SoftwareEngineering #MidasSafety #Innovation
+3. Create a `.env` file with the following variables:
+   ```
+   DB_USER=your_mssql_username
+   DB_PASSWORD=your_mssql_password
+   DB_SERVER=your_server_address
+   DB_DATABASE=MidasSafety
+   PORT=5000
+   JWT_SECRET=your_jwt_secret_key_here
+   ```
+
+4. Start the server:
+   ```
+   npm run dev
+   ```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Create a `.env` file with the following variables:
+   ```
+   REACT_APP_API_URL=http://localhost:5000/api
+   ```
+
+4. Start the development server:
+   ```
+   npm start
+   ```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - Authenticate user
+- `POST /api/auth/register` - Register new user (admin only)
+
+### Users
+- `GET /api/users` - Get all users (admin only)
+- `GET /api/users/:id` - Get user by ID
+- `POST /api/users` - Create user (admin only)
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user (admin only)
+
+### Machines
+- `GET /api/machines` - Get all machines
+- `GET /api/machines/:id` - Get machine by ID
+- `POST /api/machines` - Create machine
+- `PUT /api/machines/:id` - Update machine
+- `DELETE /api/machines/:id` - Delete machine (admin only)
+- `GET /api/machines/:id/maintenance` - Get machine maintenance history
+- `POST /api/machines/:id/faults` - Report a fault for a machine
+
+### Parameters
+- `GET /api/parameters` - Get all parameters
+- `GET /api/parameters/:id` - Get parameter by ID
+- `POST /api/parameters` - Create parameter
+- `PUT /api/parameters/:id` - Update parameter
+- `DELETE /api/parameters/:id` - Delete parameter (admin only)
+- `GET /api/parameters/:id/qualified-values` - Get parameter qualified values
+
+## Team Members
+
+- Ravindu Vinusha
+- Rumeth Jayasinghe
+- Gimhani Tharushika
+- Rashmi Rathnayaka
+
+## Project Timeline
+
+January 2024 - December 2024

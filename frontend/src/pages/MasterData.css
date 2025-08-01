@@ -1,0 +1,50 @@
+/* MasterData.css */
+.master-data-container {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px); /* Account for header and padding */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #be171d #f3f4f6; /* For Firefox */
+}
+
+/* For Webkit browsers like Chrome/Safari */
+.master-data-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.master-data-container::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.master-data-container::-webkit-scrollbar-thumb {
+  background-color: #be171d;
+  border-radius: 10px;
+  border: 2px solid #f3f4f6;
+}
+
+/* Dark mode scrollbar styles */
+body.dark-theme .master-data-container {
+  scrollbar-color: #be171d #1f2937; /* For Firefox in dark mode */
+}
+
+body.dark-theme .master-data-container::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+body.dark-theme .master-data-container::-webkit-scrollbar-thumb {
+  border: 2px solid #1f2937;
+}
+
+.master-data-content {
+  min-height: calc(100vh - 200px);
+  position: relative;
+}
+
+/* Make sure the App.jsx main-content is set to overflow visible */
+.main-content {
+  overflow: visible !important;
+  position: relative;
+  width: calc(100vw - 300px); /* Full width minus sidebar width */
+  padding-right: 1rem;
+}

@@ -1,0 +1,55 @@
+/* Additional styling to fix scrolling issues throughout the app */
+.main-content {
+  position: relative;
+  overflow: visible !important; /* Prevents the container from clipping content */
+  height: calc(100vh - 64px); /* Full height minus topbar height */
+  width: calc(100vw - 300px); /* Full width minus sidebar width */
+  padding: 1rem;
+}
+
+/* Make sure all scrollable content areas have consistent scrollbar styling */
+.scrollable-content {
+  overflow-y: auto;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #be171d #f3f4f6; /* For Firefox */
+}
+
+/* For Webkit browsers like Chrome/Safari */
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background-color: #be171d;
+  border-radius: 10px;
+  border: 2px solid #f3f4f6;
+}
+
+/* Dark mode scrollbar styles */
+body.dark-theme .scrollable-content {
+  scrollbar-color: #be171d #1f2937; /* For Firefox in dark mode */
+}
+
+body.dark-theme .scrollable-content::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+body.dark-theme .scrollable-content::-webkit-scrollbar-thumb {
+  border: 2px solid #1f2937;
+}
+
+/* Fix for tables that might overflow their containers */
+.MuiTableContainer-root {
+  max-height: calc(100vh - 250px); /* Adjust based on your layout */
+  overflow-y: auto;
+}
+
+/* Ensure content doesn't get cut off at the bottom */
+.page-container {
+  padding-bottom: 2rem;
+}
