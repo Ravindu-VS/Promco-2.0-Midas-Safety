@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, Menu, MenuItem, Badge, Avatar } from "@mui/material";
-import { Notifications as NotificationsIcon } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { IconButton, Menu, MenuItem, Avatar } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCurrentUser, logout } from "../services/authService";
+import NotificationBell from "./NotificationBell";
 import '../components/Topbar.css';
 
 const Topbar = ({ show }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
-  const [notifications, setNotifications] = useState([
-    "New message from admin",
-    "System maintenance scheduled",
-    "Task completed successfully"
-  ]);
   const [user, setUser] = useState({ name: "", profilePicture: "" });
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Load user data from localStorage
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+    // Reload on navigation and whenever the profile is saved
+    const sync = () => {
+      const storedUser = getCurrentUser();
+      if (storedUser) setUser(storedUser);
+    };
+    sync();
+    window.addEventListener('promco:user-updated', sync);
+    return () => window.removeEventListener('promco:user-updated', sync);
+  }, [location.pathname]);
 
-  const getInitials = (name) => {
-    const initials = name.split(' ')
+  const getInitials = (name) =>
+    name
+      .split(/[\s_.-]+/)
+      .filter(Boolean)
       .map((word) => word[0].toUpperCase())
-      .join('');
-    return initials;
-  };
+      .join('')
+      .slice(0, 2);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,14 +36,6 @@ const Topbar = ({ show }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleNotificationClick = (event) => {
-    setNotificationAnchorEl(event.currentTarget);
-  };
-
-  const handleNotificationClose = () => {
-    setNotificationAnchorEl(null);
   };
 
   const handleProfileClick = () => {
@@ -57,17 +49,12 @@ const Topbar = ({ show }) => {
   };
 
   const handleLogoutClick = () => {
-    localStorage.removeItem("user"); // Clear user data
-    navigate('/'); // Redirect to login page
-  };
-
-  const handleNotificationViewed = (index) => {
-    setNotifications(prevNotifications => prevNotifications.filter((_, i) => i !== index));
-    handleNotificationClose();
+    handleMenuClose();
+    logout(); // Clears both the token and the stored user
+    navigate('/login', { replace: true });
   };
 
   const isMenuOpen = Boolean(anchorEl);
-  const isNotificationOpen = Boolean(notificationAnchorEl);
 
   if (!show) return null;
 
@@ -91,15 +78,11 @@ const Topbar = ({ show }) => {
 
       {/* Right - Profile Picture and Notification Icon */}
       <div className="topbar-right">
-        {/* Notification Icon */}
-        <IconButton onClick={handleNotificationClick}>
-          <Badge badgeContent={notifications.length} color="error">
-            <NotificationsIcon className="notification-icon" />
-          </Badge>
-        </IconButton>
+        {/* Notifications from the API */}
+        <NotificationBell />
 
         {/* Profile Picture or Initials */}
-        <IconButton onClick={handleProfileMenuOpen}>
+        <IconButton onClick={handleProfileMenuOpen} aria-label="Account menu">
           {user.profilePicture ? (
             <img
               src={user.profilePicture}
@@ -108,7 +91,7 @@ const Topbar = ({ show }) => {
             />
           ) : (
             <Avatar className="profile-avatar">
-              {getInitials(user.name || "User")}
+              {getInitials(user.name || user.username || "User")}
             </Avatar>
           )}
         </IconButton>
@@ -120,7 +103,7 @@ const Topbar = ({ show }) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
         anchorOrigin={{
-          vertical: "top",
+          vertical: "bottom",
           horizontal: "right",
         }}
         transformOrigin={{
@@ -133,30 +116,6 @@ const Topbar = ({ show }) => {
         <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
       </Menu>
 
-      {/* Notification Dropdown Menu */}
-      <Menu
-        anchorEl={notificationAnchorEl}
-        open={isNotificationOpen}
-        onClose={handleNotificationClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        {notifications.length > 0 ? (
-          notifications.map((notification, index) => (
-            <MenuItem key={index} onClick={() => handleNotificationViewed(index)}>
-              {notification}
-            </MenuItem>
-          ))
-        ) : (
-          <MenuItem>No new notifications</MenuItem>
-        )}
-      </Menu>
     </div>
   );
 };

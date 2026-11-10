@@ -1,10 +1,3 @@
-/* General Layout */
-body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  margin: 0;
-}
 
 /* Container for sidebar and topbar */
 .main-layout {
@@ -51,15 +44,16 @@ body {
   border-radius: 12px;
   padding: 2rem;
   width: calc(33% - 1rem);
-  min-width: 250px;
-  color: #000000;
+  min-width: 280px;
+  flex: 1 1 320px;
+  color: inherit;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .dashboard-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -67,8 +61,8 @@ body {
 .welcome-section {
   width: 100%;
   height: 230px;
-  background-image: url('/public/welcome.png');
-  background-size: 100%;
+  /* background-image is set inline in Dashboard.jsx: CRA cannot resolve '/public/...' in CSS (it broke the build) */
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   border-radius: 10px;

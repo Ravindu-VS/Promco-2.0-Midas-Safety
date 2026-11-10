@@ -1,138 +1,272 @@
-import React, { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Alert } from "@mui/material";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import CalendarComponent from "../components/CalendarComponent";
-import MachineDataTable from "../tables/MachineDataTable";
+import StatusChip from "../components/operations/StatusChip";
+import { activityApi, faultsApi, formatDateTime, machinesApi, maintenanceApi, messagesApi, reportsApi, toLocalDateString } from "../services/api";
+import { errorMessage, getCurrentUser } from "../services/authService";
+import { downloadDailyReportPdf } from "../utils/pdfLazy";
 import './Dashboard.css';
 
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const STATUS_COLORS = {
+  Operational: '#2e7d32',
+  'Under Maintenance': '#ed6c02',
+  Faulty: '#be171d',
+  Inactive: '#9e9e9e',
+};
+
 const Dashboard = () => {
-  const [user, setUser] = useState({ name: "", email: "", role: "" });
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [appUsageData, setAppUsageData] = useState([]);
-  const [dailyWorkData, setDailyWorkData] = useState([]);
-  const [reportData, setReportData] = useState(null);
-  const [adminMessage, setAdminMessage] = useState(""); // State for admin message
+  const user = getCurrentUser() || {};
+  const isAdmin = user.role === 'admin';
+  const seesEveryone = ['admin', 'manager'].includes(user.role);
 
-  // Fetch user data from localStorage
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  const [machines, setMachines] = useState([]);
+  const [openFaults, setOpenFaults] = useState([]);
+  const [upcoming, setUpcoming] = useState([]);
+  const [activity, setActivity] = useState([]);
+  const [openMessages, setOpenMessages] = useState(0);
+  const [loadError, setLoadError] = useState('');
+
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [report, setReport] = useState(null);
+  const [reportError, setReportError] = useState('');
+  const [reportLoading, setReportLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  const [message, setMessage] = useState('');
+  const [messageStatus, setMessageStatus] = useState(null);
+
+  const loadOverview = useCallback(async () => {
+    try {
+      const today = toLocalDateString(new Date());
+      const [m, f, maint, act, msgs] = await Promise.all([
+        machinesApi.list(),
+        faultsApi.list(),
+        maintenanceApi.list(),
+        activityApi.list({ date: today, limit: 8 }),
+        messagesApi.list(),
+      ]);
+      setMachines(m);
+      setOpenFaults(f.filter((x) => x.status !== 'Resolved'));
+      setUpcoming(
+        maint
+          .filter((r) => ['Scheduled', 'In Progress'].includes(r.status))
+          .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate))
+          .slice(0, 5)
+      );
+      setActivity(act);
+      setOpenMessages(msgs.filter((x) => x.status !== 'Resolved').length);
+      setLoadError('');
+    } catch (e) {
+      setLoadError(errorMessage(e, 'Could not load the dashboard'));
     }
-
-    // Set today's date as the selected date
-    const today = new Date();
-    setSelectedDate(today);
-    // Fetch data based on today's date
-    fetchAppUsageData(today);
-    fetchDailyWorkData(today);
-    generateReportData(today);
   }, []);
 
-  // Handle date selection from the calendar
+  const loadReport = useCallback(async (date) => {
+    setReportLoading(true);
+    setReportError('');
+    try {
+      setReport(await reportsApi.daily(toLocalDateString(date)));
+    } catch (e) {
+      setReport(null);
+      setReportError(errorMessage(e, 'Could not load the report'));
+    } finally {
+      setReportLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadOverview();
+    loadReport(new Date());
+  }, [loadOverview, loadReport]);
+
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    // Fetch data based on the selected date
-    fetchAppUsageData(date);
-    fetchDailyWorkData(date);
-    generateReportData(date);
+    loadReport(date);
   };
 
-  const fetchAppUsageData = (date) => {
-    const usageData = [
-      { timeSpent: "5 hours", date: date }
-    ];
-    setAppUsageData(usageData);
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      // Fetch fresh data so the PDF reflects the moment it is generated
+      const fresh = await reportsApi.daily(toLocalDateString(selectedDate));
+      setReport(fresh);
+      await downloadDailyReportPdf(fresh);
+    } catch (e) {
+      setReportError(errorMessage(e, 'Could not generate the PDF'));
+    } finally {
+      setDownloading(false);
+    }
   };
 
-  const fetchDailyWorkData = (date) => {
-    const workData = [
-      { task: "Updated Machine Data", date: date },
-      { task: "Generated Report", date: date }
-    ];
-    setDailyWorkData(workData);
-  };
-
-  const generateReportData = (date) => {
-    const report = `Report for ${date.toDateString()}`; // Format date to a readable string
-    setReportData(report);
-  };
-
-  // Function to generate and download the report
-  const handleGenerateReport = () => {
-    if (!selectedDate) return; // Check if a date is selected
-
-    const reportContent = `Report for ${selectedDate.toDateString()}\n\n` +
-                          `App Usage: ${appUsageData.length > 0 ? appUsageData[0].timeSpent : "No Data"}\n` +
-                          `Daily Work:\n` +
-                          `${dailyWorkData.length > 0 ? dailyWorkData.map(work => `- ${work.task}`).join('\n') : "No Data"}`;
-
-    const blob = new Blob([reportContent], { type: "text/plain;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `report_${selectedDate.toISOString().split('T')[0]}.txt`; // Download filename
-    link.click();
-    URL.revokeObjectURL(link.href); // Clean up
-  };
-
-  // Handle admin message submission
-  const handleAdminMessageSubmit = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
-    if (adminMessage.trim() === "") {
-      alert("Please write a message before sending.");
+    if (!message.trim()) {
+      setMessageStatus({ severity: 'error', text: 'Please write a message before sending.' });
       return;
     }
-    // Handle the message sending logic here (e.g., send to API)
-    console.log("Message to admin:", adminMessage); // For demonstration purposes
-    alert("Your message has been sent to the admin.");
-    setAdminMessage(""); // Clear the message after sending
+    try {
+      await messagesApi.send({ body: message });
+      setMessage('');
+      setMessageStatus({ severity: 'success', text: 'Sent. The admins have been notified – replies appear in Messages.' });
+    } catch (err) {
+      setMessageStatus({ severity: 'error', text: errorMessage(err, 'Could not send the message') });
+    }
   };
+
+  const statusCounts = Object.keys(STATUS_COLORS).map((s) => machines.filter((m) => m.status === s).length);
+  const machineName = (id) => machines.find((m) => m.id === id)?.name || `#${id}`;
+  const s = report?.summary;
 
   return (
     <div className="dashboard-main-content">
-      {/* Topbar */}
-      <Topbar show={true} />
-
-      {/* Main Content */}
       <div className="dashboard-content">
-        {/* Welcome Section */}
-        <div className="welcome-section"></div>
+        <div
+          className="welcome-section"
+          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/welcome.png)` }}
+          role="img"
+          aria-label={`Welcome, ${user.username || ''}`}
+        />
 
-        {/* Dashboard Flex Section */}
+        {loadError && <Alert severity="error" sx={{ mb: 2 }}>{loadError}</Alert>}
+
         <div className="dashboard-section">
-
-          {/* Calendar */}
+          {/* Machines */}
           <div className="dashboard-card">
-            <h3 className="card-title">Calendar</h3>
-            <CalendarComponent onDateSelect={handleDateSelect} />
+            <h3 className="card-title">Machines</h3>
+            {machines.length === 0 ? (
+              <p className="card-empty">
+                No machines registered yet. <Link to="/machine" className="card-link">Go to Machines</Link>
+              </p>
+            ) : (
+              <>
+                <div className="chart-box">
+                  <Doughnut
+                    data={{
+                      labels: Object.keys(STATUS_COLORS),
+                      datasets: [{ data: statusCounts, backgroundColor: Object.values(STATUS_COLORS), borderWidth: 0 }],
+                    }}
+                    options={{ plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }, maintainAspectRatio: false }}
+                  />
+                </div>
+                <p className="card-footnote">{machines.length} machine(s) registered · <Link to="/machine" className="card-link">View all</Link></p>
+              </>
+            )}
           </div>
 
-          {/* Generate Report */}
+          {/* Open faults */}
           <div className="dashboard-card">
-            <h3 className="card-title">Generated Report</h3>
-            <p>{selectedDate ? reportData : "Select a date to generate the report."}</p>
-            <button className="red-button" onClick={handleGenerateReport} disabled={!selectedDate}>
-              Generate Report
+            <h3 className="card-title">Open Faults <span className="card-count">{openFaults.length}</span></h3>
+            {openFaults.length === 0 ? (
+              <p className="card-empty">No open fault reports.</p>
+            ) : (
+              <ul className="card-list">
+                {openFaults.slice(0, 5).map((f) => (
+                  <li key={f.id}>
+                    <StatusChip value={f.priority} /> <b>{machineName(f.machineId)}</b>: {f.description}
+                    <div className="card-meta">{f.status} · reported by {f.reportedByName}, {formatDateTime(f.reportedAt)}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="card-footnote"><Link to="/faults" className="card-link">All fault reports</Link></p>
+          </div>
+
+          {/* Upcoming maintenance */}
+          <div className="dashboard-card">
+            <h3 className="card-title">Upcoming Maintenance</h3>
+            {upcoming.length === 0 ? (
+              <p className="card-empty">Nothing scheduled.</p>
+            ) : (
+              <ul className="card-list">
+                {upcoming.map((r) => (
+                  <li key={r.id}>
+                    <b>{r.scheduledDate}</b> · {machineName(r.machineId)} – {r.maintenanceType}
+                    <div className="card-meta">{r.status}{r.technicianName ? ` · ${r.technicianName}` : ' · unassigned'}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="card-footnote"><Link to="/maintenance" className="card-link">All maintenance</Link></p>
+          </div>
+
+          {/* Daily report */}
+          <div className="dashboard-card report-card">
+            <h3 className="card-title">Daily Report</h3>
+            <CalendarComponent onDateSelect={handleDateSelect} />
+            {reportError && <Alert severity="error" sx={{ mt: 1 }}>{reportError}</Alert>}
+            {reportLoading && <p className="card-empty">Loading…</p>}
+            {s && !reportLoading && (
+              <table className="report-summary">
+                <tbody>
+                  <tr><td>Faults reported</td><td>{s.faultsReported}</td></tr>
+                  <tr><td>Faults resolved</td><td>{s.faultsResolved}</td></tr>
+                  <tr><td>Maintenance scheduled</td><td>{s.maintenanceScheduled}</td></tr>
+                  <tr><td>Maintenance completed</td><td>{s.maintenanceCompleted}</td></tr>
+                  <tr><td>Recorded actions ({report.activityScope})</td><td>{s.activityCount}</td></tr>
+                </tbody>
+              </table>
+            )}
+            <button className="red-button" onClick={handleDownload} disabled={downloading || reportLoading}>
+              {downloading ? 'Generating…' : 'Download PDF Report'}
             </button>
           </div>
 
-          {/* Contact Admin */}
-          {user.role !== "admin" && ( // Only show if the user is not an admin
-            <div className="dashboard-card">
-              <h3 className="card-title">Contact Admin</h3>
-              <form onSubmit={handleAdminMessageSubmit}>
-                <textarea
-                  value={adminMessage}
-                  onChange={(e) => setAdminMessage(e.target.value)}
-                  placeholder="Write your message here..."
-                  rows="4"
-                  required
-                  style={{ width: "100%", resize: "none" }} // Custom styles
-                />
-                <button type="submit" style={{ marginTop: "10px" }}>Send Message</button>
-              </form>
-            </div>
-          )}
+          {/* Activity */}
+          <div className="dashboard-card">
+            <h3 className="card-title">{seesEveryone ? "Today's Activity" : 'Your Activity Today'}</h3>
+            {activity.length === 0 ? (
+              <p className="card-empty">No activity recorded today.</p>
+            ) : (
+              <ul className="card-list">
+                {activity.map((a) => (
+                  <li key={a.id}>
+                    {a.summary}
+                    <div className="card-meta">{seesEveryone ? `${a.username} · ` : ''}{new Date(a.timestamp).toLocaleTimeString()}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Messages */}
+          <div className="dashboard-card">
+            {isAdmin ? (
+              <>
+                <h3 className="card-title">Messages <span className="card-count">{openMessages}</span></h3>
+                <p className="card-empty">
+                  {openMessages === 0 ? 'No unanswered messages.' : `${openMessages} message(s) waiting for a reply.`}
+                </p>
+                <p className="card-footnote"><Link to="/messages" className="card-link">Open inbox</Link></p>
+              </>
+            ) : (
+              <>
+                <h3 className="card-title">Contact Admin</h3>
+                <form onSubmit={sendMessage}>
+                  <textarea
+                    className="admin-message-input"
+                    value={message}
+                    onChange={(e) => {
+                      setMessage(e.target.value);
+                      setMessageStatus(null);
+                    }}
+                    placeholder="Write your message here..."
+                    rows="4"
+                    maxLength={2000}
+                  />
+                  <button type="submit" className="red-button" style={{ marginTop: "10px" }}>Send Message</button>
+                </form>
+                {messageStatus && <Alert severity={messageStatus.severity} sx={{ mt: 1 }}>{messageStatus.text}</Alert>}
+                <p className="card-footnote">
+                  {openMessages > 0 ? `${openMessages} awaiting a reply · ` : ''}<Link to="/messages" className="card-link">Your messages</Link>
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

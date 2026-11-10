@@ -1,7 +1,5 @@
-import { Routes, Route, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import './styles/tailwind.css';
-import LoadingSpinner from './components/LoadingSpinner';
 import ThemeToggleButton from './components/ThemeToggleButton';
 import Login from './pages/Login';
 import Topbar from './components/Topbar';
@@ -16,6 +14,7 @@ import ParameterTable from './tables/ParameterTable';
 import ParameterQualifiedValueTable from './tables/ParameterQualifiedValueTable';
 import PlantDepartmentTable from './tables/PlantDepartmentTable';
 import PlantDeptAbpUserTable from './tables/PlantDeptAbpUserTable';
+import SectionTable from './tables/SectionTable';
 import SectionTemplateTable from './tables/SectionTemplateTable';
 import ShiftTable from './tables/ShiftTable';
 import SubSectionTable from './tables/SubSectionTable';
@@ -25,65 +24,63 @@ import UserManage from './pages/UserManage';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
 import Background from './components/Background';
-import WelcomePage from './pages/WelcomePage'; // Import WelcomePage
+import WelcomePage from './pages/WelcomePage';
+import Faults from './pages/Faults';
+import Maintenance from './pages/Maintenance';
+import Messages from './pages/Messages';
+import NotFound from './pages/NotFound';
+import { getCurrentUser, isAuthenticated } from './services/authService';
+import './styles/layout.css'; // imported last so the shared layout wins over page CSS
+
+// Redirects to /login when there is no session; optionally restricts by role.
+const RequireAuth = ({ roles }) => {
+  const location = useLocation();
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+  if (roles && !roles.includes(getCurrentUser()?.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return <Outlet />;
+};
+
+// Public pages: already-signed-in users go straight to the dashboard.
+const PublicOnly = ({ children }) =>
+  isAuthenticated() ? <Navigate to="/dashboard" replace /> : children;
 
 // Dashboard Layout Component (Topbar + Sidebar + Content)
 const DashboardLayout = () => (
-  <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
-    <Sidebar />  {/* Fixed sidebar */}
-    <div>
-      <Topbar show={true} /> {/* Topbar */}
-      <div className="main-content mt-6"> {/* Padding for content */}
-        <Outlet /> {/* Nested routes will render here */}
-      </div>
-    </div>
+  <div className="app-shell">
+    <Topbar show />
+    <Sidebar />
+    <main className="app-main">
+      <Outlet />
+    </main>
   </div>
 );
 
 function App() {
-  const [users, setUsers] = useState([]); // Initialize empty user list
-  const [loading, setLoading] = useState(false); // State to track loading
-  const navigate = useNavigate(); // Get the navigate function from react-router-dom
-  const location = useLocation(); // Track location changes
-  const [isFirstVisit, setIsFirstVisit] = useState(false); // Track first visit
-
-  // Check if it's the first visit
-  useEffect(() => {
-    if (!localStorage.getItem('hasVisited')) {
-      setIsFirstVisit(true); // Show WelcomePage
-      localStorage.setItem('hasVisited', 'true'); // Set flag for future visits
-    }
-  }, []);
-
-  // Show loading spinner on location change (route change)
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 1000); // Hide after 1 second
-    return () => clearTimeout(timer);
-  }, [location]); // Runs every time the location changes
-
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-500">
-      <Background />  {/* Background component */}
-      <ThemeToggleButton /> {/* Toggle theme button visible on all pages */}
-      {loading ? <LoadingSpinner /> : null} {/* Show loading spinner if loading is true */}
-      
-      {/* Conditional Rendering for First Visit */}
-      {isFirstVisit ? (
-        <WelcomePage /> // Show Welcome Page if it's the first visit
-      ) : (
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Login users={users} />} /> {/* Pass user data to Login */}
+      <Background />
+      <ThemeToggleButton />
 
-          {/* Dashboard Routes */}
-          <Route element={<DashboardLayout />}> {/* Layout wrapping all dashboard routes */}
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<PublicOnly><WelcomePage /></PublicOnly>} />
+        <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
+
+        {/* Authenticated Routes */}
+        <Route element={<RequireAuth />}>
+          <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile user={users[0]} />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/UserManage" element={<UserManage users={users} setUsers={setUsers} />} />
             <Route path="/masterData" element={<MasterData />} />
             <Route path="/machine" element={<MachineTable />} />
+            <Route path="/faults" element={<Faults />} />
+            <Route path="/maintenance" element={<Maintenance />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="/machine-type" element={<MachineTypeTable />} />
             <Route path="/main-section" element={<MainSectionTable />} />
             <Route path="/material-code" element={<MaterialCodeTable />} />
@@ -92,13 +89,21 @@ function App() {
             <Route path="/parameter-qualified-value" element={<ParameterQualifiedValueTable />} />
             <Route path="/plant-department" element={<PlantDepartmentTable />} />
             <Route path="/plant-dept-abp-user" element={<PlantDeptAbpUserTable />} />
+            <Route path="/section" element={<SectionTable />} />
             <Route path="/section-template" element={<SectionTemplateTable />} />
             <Route path="/shift" element={<ShiftTable />} />
             <Route path="/sub-section" element={<SubSectionTable />} />
             <Route path="/tolerance" element={<ToleranceTable />} />
+
+            {/* Admin only */}
+            <Route element={<RequireAuth roles={['admin']} />}>
+              <Route path="/UserManage" element={<UserManage />} />
+            </Route>
           </Route>
-        </Routes>
-      )}
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 }

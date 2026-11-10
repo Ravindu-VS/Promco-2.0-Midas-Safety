@@ -22,11 +22,14 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import './UserManage.css';
-import { userService } from '../services/apiService';
-import { getCurrentUser, isAuthenticated } from '../services/authService';
+import userService from '../services/userService';
+import { getCurrentUser } from '../services/authService';
+
+const EMPTY_USER = { id: '', username: '', email: '', role: '', password: '', profilePicture: '' };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const UserManage = () => {
   const navigate = useNavigate();
@@ -34,98 +37,46 @@ const UserManage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [currentUser, setCurrentUser] = useState({
-    id: '',
-    username: '',
-    email: '',
-    role: '',
-    password: '',
-    profilePicture: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
+  const [currentUser, setCurrentUser] = useState(EMPTY_USER);
   const [alert, setAlert] = useState({ open: false, message: '', severity: 'info' });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is authenticated and has admin role
-    const checkAuth = () => {
-      if (!isAuthenticated()) {
-        setAlert({ 
-          open: true, 
-          message: 'You must be logged in to access this page', 
-          severity: 'error' 
-        });
-        navigate('/');
-        return false;
-      }
-      
-      const currentUser = getCurrentUser();
-      if (currentUser && currentUser.role !== 'admin') {
-        setAlert({ 
-          open: true, 
-          message: 'You do not have permission to access this page', 
-          severity: 'error' 
-        });
-        navigate('/dashboard');
-        return false;
-      }
-      
-      return true;
-    };
-    
-    // Fetch users from the API
+    // Access control is handled by the <RequireAuth roles={['admin']}> route guard.
     const fetchUsers = async () => {
-      if (!checkAuth()) return;
-      
       setLoading(true);
-      try {
-        const result = await userService.getAllUsers();
-        
-        if (result.success) {
-          setUserList(result.data);
-        } else {
-          // Fallback to sample data if API fails
-          console.log('Falling back to sample user data');
-          const sampleUsers = [
-            { id: '1', username: 'john_doe', email: 'admin@example.com', role: 'admin', password: '******', profilePicture: '' },
-            { id: '2', username: 'jane_smith', email: 'manager@example.com', role: 'manager', password: '******', profilePicture: '' },
-            { id: '3', username: 'michael_jordan', email: 'operator@example.com', role: 'operator', password: '******', profilePicture: '' },
-            { id: '4', username: 'emily_clark', email: 'user@example.com', role: 'user', password: '******', profilePicture: '' },
-          ];
-          setUserList(sampleUsers);
-        }
-      } catch (error) {
-        setAlert({ 
-          open: true, 
-          message: 'Failed to load users. Using sample data instead.', 
-          severity: 'warning' 
-        });
-        
-        // Fallback to sample data
-        const sampleUsers = [
-          { id: '1', username: 'john_doe', email: 'admin@example.com', role: 'admin', password: '******', profilePicture: '' },
-          { id: '2', username: 'jane_smith', email: 'manager@example.com', role: 'manager', password: '******', profilePicture: '' },
-          { id: '3', username: 'michael_jordan', email: 'operator@example.com', role: 'operator', password: '******', profilePicture: '' },
-          { id: '4', username: 'emily_clark', email: 'user@example.com', role: 'user', password: '******', profilePicture: '' },
-        ];
-        setUserList(sampleUsers);
-      } finally {
-        setLoading(false);
+      const result = await userService.getAllUsers();
+      if (result.success) {
+        setUserList(result.data);
+      } else {
+        setUserList([]);
+        setAlert({ open: true, message: result.error || 'Failed to load users', severity: 'error' });
       }
+      setLoading(false);
     };
-    
+
     fetchUsers();
-  }, [navigate]);
+  }, []);
+
+  const validate = (user, { requirePassword }) => {
+    if (!user.username.trim() || !user.email.trim() || !user.role || (requirePassword && !user.password)) {
+      return 'Please fill in all required fields';
+    }
+    if (!EMAIL_RE.test(user.email)) {
+      return 'Please enter a valid email address';
+    }
+    if (user.password && user.password.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
+  };
 
   // Helper functions for managing users
 
   const handleAddUser = async () => {
-    if (!currentUser.username || !currentUser.email || !currentUser.role || !currentUser.password) {
-      setAlert({ 
-        open: true, 
-        message: 'Please fill in all required fields', 
-        severity: 'error' 
-      });
+    const validationError = validate(currentUser, { requirePassword: true });
+    if (validationError) {
+      setAlert({ open: true, message: validationError, severity: 'error' });
       return;
     }
     
@@ -141,15 +92,12 @@ const UserManage = () => {
       const result = await userService.createUser(userData);
       
       if (result.success) {
-        // Add the new user to the list with the ID from the API
-        const newUser = { 
-          id: result.data.userId,
-          ...userData
-        };
-        
-        setUserList([...userList, newUser]);
+        const { password, ...safeUser } = userData;
+        const newUser = { ...safeUser, ...result.data };
+
+        setUserList((prev) => [...prev, newUser]);
         setOpenAddDialog(false);
-        setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
+        setCurrentUser(EMPTY_USER);
         
         setAlert({ 
           open: true, 
@@ -174,6 +122,11 @@ const UserManage = () => {
   };
 
   const handleEditUser = async () => {
+    const validationError = validate(currentUser, { requirePassword: false });
+    if (validationError) {
+      setAlert({ open: true, message: validationError, severity: 'error' });
+      return;
+    }
     try {
       const userData = {
         username: currentUser.username,
@@ -182,8 +135,8 @@ const UserManage = () => {
         profilePicture: currentUser.profilePicture || null
       };
       
-      // Only include password if it's changed (not ******)
-      if (currentUser.password && currentUser.password !== '******') {
+      // Only send a password when the admin typed a new one
+      if (currentUser.password) {
         userData.password = currentUser.password;
       }
       
@@ -191,13 +144,12 @@ const UserManage = () => {
       
       if (result.success) {
         // Update the user in the list
-        const updatedUserList = userList.map(user => 
-          user.id === currentUser.id ? { ...user, ...userData } : user
+        const { password, ...safeData } = userData;
+        setUserList((prev) =>
+          prev.map((user) => (user.id === currentUser.id ? { ...user, ...safeData } : user))
         );
-        
-        setUserList(updatedUserList);
         setOpenEditDialog(false);
-        setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
+        setCurrentUser(EMPTY_USER);
         
         setAlert({ 
           open: true, 
@@ -221,14 +173,21 @@ const UserManage = () => {
     }
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = async (user) => {
+    if (String(user.id) === String(getCurrentUser()?.id)) {
+      setAlert({ open: true, message: 'You cannot delete your own account', severity: 'warning' });
+      return;
+    }
+    if (!window.confirm(`Delete user "${user.username}"? This cannot be undone.`)) {
+      return;
+    }
+    const id = user.id;
     try {
       const result = await userService.deleteUser(id);
       
       if (result.success) {
         // Remove the user from the list
-        const updatedUserList = userList.filter(user => user.id !== id);
-        setUserList(updatedUserList);
+        setUserList((prev) => prev.filter((u) => u.id !== id));
         
         setAlert({ 
           open: true, 
@@ -253,32 +212,37 @@ const UserManage = () => {
   };
 
   const openAddUserDialog = () => {
-    setCurrentUser({ id: '', username: '', email: '', role: '', password: '', profilePicture: '' });
+    setCurrentUser(EMPTY_USER);
     setOpenAddDialog(true);
   };
 
   const openEditUserDialog = (user) => {
-    setCurrentUser(user);
+    // Never pre-fill the password field; leave blank to keep the current password
+    setCurrentUser({ ...EMPTY_USER, ...user, password: '' });
     setOpenEditDialog(true);
   };
 
-      // When navigating to profile
-  const handleViewProfile = (id) => {
-    const user = userList.find((user) => user.id === id);
-    localStorage.setItem('user', JSON.stringify(user)); // Save selected user data to local storage      navigate(`/profile/${id}`);
-    };
+  // Open a read-only profile view without touching the logged-in user's session
+  const handleViewProfile = (user) => {
+    navigate('/profile', { state: { user } });
+  };
 
 
+  const term = searchTerm.toLowerCase();
   const filteredUsers = userList.filter((user) =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    (user.username || '').toLowerCase().includes(term) ||
+    (user.email || '').toLowerCase().includes(term) ||
+    (user.role || '').toLowerCase().includes(term)
   );
 
-  const getInitials = (name) => {
-    const initials = name.split(' ').map((word) => word[0]).join('');
-    return initials.toUpperCase();
-  };
+  const getInitials = (name = '') =>
+    name
+      .split(/[\s_.-]+/)
+      .filter(Boolean)
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || 'U';
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -296,8 +260,9 @@ const UserManage = () => {
       <h2 className="page-title">User Management</h2>
       <div className="toolbar">
         <TextField
-          label="Search Users"
+          label="Search users"
           variant="outlined"
+          size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-bar"
@@ -318,6 +283,7 @@ const UserManage = () => {
           <p>Loading users...</p>
         </div>
       ) : (
+        <TableContainer component={Paper} className="user-table-container">
         <Table>
           <TableHead>
             <TableRow>
@@ -326,12 +292,6 @@ const UserManage = () => {
               <TableCell className="table-header-cell">Username</TableCell>
               <TableCell className="table-header-cell">Email</TableCell>
               <TableCell className="table-header-cell">Role</TableCell>
-              <TableCell className="table-header-cell">
-                Password
-                <IconButton onClick={() => setShowPassword((prev) => !prev)}>
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </TableCell>
               <TableCell className="table-header-cell">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -352,36 +312,34 @@ const UserManage = () => {
                 <TableCell className="table-cell">{user.email}</TableCell>
                 <TableCell className="table-cell">{user.role}</TableCell>
                 <TableCell className="table-cell">
-                  {showPassword ? user.password : '******'}
-                </TableCell>
-                <TableCell className="table-cell">
-                  <IconButton color="primary" onClick={() => openEditUserDialog(user)}>
+                  <IconButton color="primary" aria-label={`Edit ${user.username}`} onClick={() => openEditUserDialog(user)}>
                     <EditIcon className="action-icon" />
                   </IconButton>
-                  <IconButton color="secondary" onClick={() => handleDeleteUser(user.id)}>
+                  <IconButton color="secondary" aria-label={`Delete ${user.username}`} onClick={() => handleDeleteUser(user)}>
                     <DeleteIcon className="action-icon" />
                   </IconButton>
-                  <IconButton color="default" onClick={() => handleViewProfile(user.id)}>
+                  <IconButton color="default" aria-label={`View ${user.username}`} onClick={() => handleViewProfile(user)}>
                     <Visibility className="action-icon" />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
+            {filteredUsers.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="table-cell" align="center">
+                  No users found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
+        </TableContainer>
       )}
       
       {/* Add User Dialog */}
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle className="dialog-title">Add User</DialogTitle>
         <DialogContent className="dialog-content">
-          <TextField
-            label="User ID"
-            value={currentUser.id}
-            onChange={(e) => setCurrentUser({ ...currentUser, id: e.target.value })}
-            fullWidth
-            className="dialog-input"
-          />
           <TextField
             label="Username"
             value={currentUser.username}
@@ -391,19 +349,23 @@ const UserManage = () => {
           />
           <TextField
             label="Email"
+            type="email"
             value={currentUser.email}
             onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
           />
           <FormControl fullWidth className="dialog-input">
-            <InputLabel>Role</InputLabel>
+            <InputLabel id="role-label">Role</InputLabel>
             <Select
+              labelId="role-label"
+              label="Role"
               value={currentUser.role}
               onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })}
             >
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="manager">Manager</MenuItem>
+              <MenuItem value="technician">Technician</MenuItem>
               <MenuItem value="operator">Operator</MenuItem>
               <MenuItem value="user">User</MenuItem>
             </Select>
@@ -416,7 +378,7 @@ const UserManage = () => {
             fullWidth
             className="dialog-input"
           />
-          <input type="file" onChange={handleImageChange} />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAddDialog(false)} color="primary">Cancel</Button>
@@ -444,32 +406,37 @@ const UserManage = () => {
           />
           <TextField
             label="Email"
+            type="email"
             value={currentUser.email}
             onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
             fullWidth
             className="dialog-input"
           />
           <FormControl fullWidth className="dialog-input">
-            <InputLabel>Role</InputLabel>
+            <InputLabel id="role-label">Role</InputLabel>
             <Select
+              labelId="role-label"
+              label="Role"
               value={currentUser.role}
               onChange={(e) => setCurrentUser({ ...currentUser, role: e.target.value })}
             >
               <MenuItem value="admin">Admin</MenuItem>
               <MenuItem value="manager">Manager</MenuItem>
+              <MenuItem value="technician">Technician</MenuItem>
               <MenuItem value="operator">Operator</MenuItem>
               <MenuItem value="user">User</MenuItem>
             </Select>
           </FormControl>
           <TextField
-            label="Password"
+            label="New password"
+            helperText="Leave blank to keep the current password"
             type="password"
             value={currentUser.password}
             onChange={(e) => setCurrentUser({ ...currentUser, password: e.target.value })}
             fullWidth
             className="dialog-input"
           />
-          <input type="file" onChange={handleImageChange} />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenEditDialog(false)} color="primary">Cancel</Button>

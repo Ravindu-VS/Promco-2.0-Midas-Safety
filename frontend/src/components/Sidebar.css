@@ -65,9 +65,9 @@ body.dark-theme .profile-icon {
 }
 
 /* Profile picture */
-.profile-picture {
-  width: 50%; /* Make the picture smaller */
-  height: 50%; /* Make the picture smaller */
+.sidebar .profile-picture {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover; /* Maintain aspect ratio */
   border-color: #000;
@@ -75,7 +75,7 @@ body.dark-theme .profile-icon {
   justify-content: center;
 }
 
-.body.dark-theme .profile-picture {
+body.dark-theme .sidebar .profile-picture {
   border-color: #ffffff;
 }
 

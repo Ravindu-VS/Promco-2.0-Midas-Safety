@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/build/
+backend/bin/
+backend/obj/
+
+# Runtime data (JSON data store) and uploads
+backend/App_Data/
+backend/uploads/
+frontend/dist/
+
+# Local env overrides
+.env.local
+.env.*.local
+
+# IDE / OS
+.vs/
+.vscode/
+*.user
+.DS_Store
+Thumbs.db

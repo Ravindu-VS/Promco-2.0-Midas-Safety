@@ -1,13 +1,3 @@
-/* General Layout */
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background-color: transparent;
-    font-family: 'Roboto', sans-serif;
-  }
   
   /* Main content area */
   .table-main-content {
@@ -66,8 +56,8 @@ body {
     min-width: 180px; /* Ensure each field stays compact */
   }
   
-  /* Table Container Styling */
-  .MuiPaper-root {
+  /* Table Container Styling (scoped: a global .MuiPaper-root rule made dialogs and menus transparent) */
+  .table-main-content > .MuiPaper-root {
     background-color: transparent;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -137,12 +127,12 @@ body.dark-theme .MuiTablePagination-root .MuiIconButton-root {
     background-color: #9e1415;
   }
   
-  /* Icon Button Styling */
-  .MuiIconButton-root {
+  /* Icon Button Styling (scoped – these were global and changed every Box/IconButton in the app) */
+  .table-frame .MuiIconButton-root {
     margin-right: 0.5rem;
   }
-  
-  .MuiBox-root {
+
+  .table-frame .MuiBox-root {
     display: flex;
     align-items: center;
   }

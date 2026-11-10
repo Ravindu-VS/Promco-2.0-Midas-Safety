@@ -1,55 +1,56 @@
 import apiConfig from './apiConfig';
 import axiosInstance from './axiosConfig';
 
-// Point to the configured backend server
-const API_URL = apiConfig.API_BASE_URL;
+const { TOKEN, USER } = apiConfig.STORAGE_KEYS;
+
+export const ROLES = ['admin', 'manager', 'technician', 'operator', 'user'];
+
+// Turns an axios error into a message that can be shown to the user.
+export const errorMessage = (error, fallback = 'Something went wrong') => {
+  if (!error) return fallback;
+  if (!error.response) return 'Cannot reach the server. Make sure the backend is running.';
+  return error.response.data?.message || fallback;
+};
+
+const normalizeUser = (user) => (user ? { ...user, name: user.username } : null);
+
+const saveUser = (user) => {
+  const normalized = normalizeUser(user);
+  localStorage.setItem(USER, JSON.stringify(normalized));
+  window.dispatchEvent(new Event('promco:user-updated'));
+  return normalized;
+};
 
 export const loginUser = async (email, password) => {
-  try {
-    const response = await axiosInstance.post(`${API_URL}/auth/login`, { email, password });
-    // Store the token and user info in localStorage
-    if (response.data && response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
-    return response.data;
-  } catch (error) {
-    console.error('Login error:', error);
-    throw error;
-  }
+  const response = await axiosInstance.post('/auth/login', { email, password });
+  const { user, token } = response.data || {};
+  if (!user || !token) throw new Error('Unexpected login response from server');
+  localStorage.setItem(TOKEN, token);
+  return saveUser(user);
 };
 
-export const createUser = async (userData) => {
-  try {
-    const response = await axiosInstance.post(`${API_URL}/users`, userData);
-    return response.data;
-  } catch (error) {
-    console.error('Create user error:', error);
-    throw error;
-  }
+// Reloads the signed-in user from the server (keeps role/profile changes in sync).
+export const refreshCurrentUser = async () => {
+  const response = await axiosInstance.get('/auth/me');
+  return saveUser(response.data);
 };
 
-// Get the current user from localStorage
+export const setCurrentUser = (user) => saveUser(user);
+
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem('user');
-  if (!userStr) return null;
-  return JSON.parse(userStr);
+  try {
+    const userStr = localStorage.getItem(USER);
+    return userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    return null;
+  }
 };
 
-// Check if user is authenticated
-export const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
-};
+export const isAuthenticated = () => !!getCurrentUser() && !!localStorage.getItem(TOKEN);
 
-// Logout user by removing token and user info
+export const hasRole = (...roles) => roles.includes(getCurrentUser()?.role);
+
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
+  localStorage.removeItem(TOKEN);
+  localStorage.removeItem(USER);
 };
-
-// Add auth headers for authenticated requests
-export const authHeader = () => {
-  const token = localStorage.getItem('token');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
-};
-

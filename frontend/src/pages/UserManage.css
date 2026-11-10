@@ -66,8 +66,8 @@ body {
   background-color: #9e1415;
 }
 
-/* Table Container */
-table {
+/* Table Container (scoped – a bare `table` selector restyled every table in the app) */
+.user-manage-container table {
   margin-top: 20px;
   background-color: transparent;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9); /* Add shadow */
@@ -82,9 +82,13 @@ table {
   font-weight: bold;
 }
 
-/* Table Cells */
+/* Table Cells (was white text on a light background in light mode) */
 .table-cell {
-  color: white;
+  color: #111;
+}
+
+body.dark-theme .table-cell {
+  color: #fff;
 }
 
 .table-cell,
@@ -180,13 +184,17 @@ body.dark-theme .MuiTablePagination-root {
   margin-bottom: 40px; /* More space between each input field */
 }
 
-/* Icon Buttons */
-.MuiIconButton-root {
+/* Icon Buttons (scoped to this page) */
+.user-manage-container .MuiIconButton-root {
   color: #000000;
 }
 
-.MuiIconButton-root:hover {
+.user-manage-container .MuiIconButton-root:hover {
   color: #be171d;
+}
+
+body.dark-theme .user-manage-container .action-icon {
+  color: #ffffff;
 }
 
 .action-icon {
@@ -197,9 +205,9 @@ body.dark-theme .MuiTablePagination-root {
   color: #be171d;
 }
 
-/* Dialog Styles */
+/* Dialog Styles (was transparent, which made every dialog in the app see-through) */
 .MuiDialog-paper {
-  background-color: transparent;
+  background-color: #ffffff;
   color: #000000;
 }
 
@@ -230,11 +238,12 @@ body.dark-theme .MuiTablePagination-root {
   border-bottom-color: #be171d;
 }
 
-/* Profile Picture */
-.profile-picture {
+/* Profile thumbnail in the users table */
+.profile-thumbnail {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .profile-initials {
@@ -263,10 +272,15 @@ body.dark-theme .profile-initials{
 
 .search-bar .MuiInputBase-root {
   background-color: transparent;
-  color: #000000;
-  border: 1px solid #000000;
-  padding: 8px 12px;
-  border-radius: 4px;
+  color: inherit;
+}
+
+body.dark-theme .search-bar .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-theme .search-bar .MuiInputLabel-root {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .search-bar .MuiInputBase-root:focus-within {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Collapse,
@@ -13,37 +13,51 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GroupIcon from "@mui/icons-material/Group";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import MailIcon from "@mui/icons-material/Mail";
+import { getCurrentUser } from "../services/authService";
 import "./Sidebar.css";
+
+const operationLinks = [
+  { path: "/machine", label: "Machines", Icon: PrecisionManufacturingIcon },
+  { path: "/faults", label: "Fault Reports", Icon: ReportProblemIcon },
+  { path: "/maintenance", label: "Maintenance", Icon: EngineeringIcon },
+];
+
+// Defined outside the component so it is a stable reference
+const masterDataPaths = [
+  { path: "/masterData", label: "Overview" },
+  { path: "/machine-type", label: "Machine Type" },
+  { path: "/main-section", label: "Main Section" },
+  { path: "/material-code", label: "Material Code" },
+  { path: "/parameter", label: "Parameter" },
+  { path: "/parameter-norm", label: "Parameter Norm" },
+  { path: "/parameter-qualified-value", label: "Parameter Qualified Value" },
+  { path: "/plant-department", label: "Plant Department" },
+  { path: "/plant-dept-abp-user", label: "Plant Department Users" },
+  { path: "/section", label: "Section" },
+  { path: "/section-template", label: "Section Template" },
+  { path: "/shift", label: "Shift" },
+  { path: "/sub-section", label: "Sub Section" },
+  { path: "/tolerance", label: "Tolerance" },
+];
 
 const Sidebar = () => {
   const [masterDataOpen, setMasterDataOpen] = useState(false);
   const [user, setUser] = useState({ name: "", email: "", role: "", profilePicture: "" });
   const location = useLocation();
 
-  // Define your master data paths
-  const masterDataPaths = [
-    { path: "/machine", label: "Machine" },
-    { path: "/machine-type", label: "Machine Type" },
-    { path: "/main-section", label: "Main Section" },
-    { path: "/material-code", label: "Material Code" },
-    { path: "/parameter", label: "Parameter" },
-    { path: "/parameter-norm", label: "Parameter Norm" }, // Match with App.jsx
-    { path: "/parameter-qualified-value", label: "Parameter Qualified Value" },
-    { path: "/plant-department", label: "Plant Department" },
-    { path: "/plant-dept-abp-user", label: "Plant Dept Abp User" },
-    { path: "/shift", label: "Shift" },
-    { path: "/sub-section", label: "Sub Section" },
-    { path: "/tolerance", label: "Tolerance" },
-  ];
-
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const storedUser = localStorage.getItem("user");
+    const storedUser = getCurrentUser();
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
-    setMasterDataOpen(masterDataPaths.some((item) => item.path === location.pathname));
-  }, [location.pathname]); // Only location.pathname as dependency
+    if (masterDataPaths.some((item) => item.path === location.pathname)) {
+      setMasterDataOpen(true);
+    }
+  }, [location.pathname]);
   
   const handleMasterDataClick = () => {
     setMasterDataOpen((prev) => !prev);
@@ -55,11 +69,14 @@ const Sidebar = () => {
     return nameParts[0];
   };
 
-  const generateInitials = (name) => {
-    const nameParts = name.split(" ");
-    const initials = nameParts.map((part) => part[0]).join("").toUpperCase();
-    return initials.length > 2 ? initials.slice(0, 2) : initials;
-  };
+  const generateInitials = (name) =>
+    name
+      .split(/[\s_.-]+/)
+      .filter(Boolean)
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
 
   return (
     <div className="sidebar">
@@ -70,12 +87,12 @@ const Sidebar = () => {
             <img src={user.profilePicture} alt="Profile" className="profile-picture" />
           ) : (
             <div className="initials-icon">
-              {generateInitials(user.name || "User Name")}
+              {generateInitials(user.name || user.username || "User")}
             </div>
           )}
         </div>
         <div>
-          <p className="welcome-text">Welcome, {getFirstName(user.name)}</p>
+          <p className="welcome-text">Welcome, {getFirstName(user.name || user.username)}</p>
           <p className="user-email">{user.email || "Email"}</p>
           <p className="user-role">{user.role || "Role"}</p>
         </div>
@@ -83,8 +100,7 @@ const Sidebar = () => {
 
       {/* Sidebar Links */}
       <List className="sidebar-links">
-        <ListItem
-          button
+        <ListItemButton
           component={Link}
           to="/dashboard"
           className={location.pathname === "/dashboard" ? "active" : ""}
@@ -93,11 +109,26 @@ const Sidebar = () => {
             <HomeIcon className="icon" />
           </ListItemIcon>
           <ListItemText primary="Home" />
-        </ListItem>
+        </ListItemButton>
+
+        {operationLinks.map(({ path, label, Icon }) => (
+          <ListItemButton key={path} component={Link} to={path} className={location.pathname === path ? "active" : ""}>
+            <ListItemIcon>
+              <Icon className="icon" />
+            </ListItemIcon>
+            <ListItemText primary={label} />
+          </ListItemButton>
+        ))}
+
+        <ListItemButton component={Link} to="/messages" className={location.pathname === "/messages" ? "active" : ""}>
+          <ListItemIcon>
+            <MailIcon className="icon" />
+          </ListItemIcon>
+          <ListItemText primary={user.role === "admin" ? "Messages" : "Contact Admin"} />
+        </ListItemButton>
 
         {user.role === "admin" && (
-          <ListItem
-            button
+          <ListItemButton
             component={Link}
             to="/UserManage"
             className={location.pathname === "/UserManage" ? "active" : ""}
@@ -105,11 +136,11 @@ const Sidebar = () => {
             <ListItemIcon>
               <GroupIcon className="icon" />
             </ListItemIcon>
-            <ListItemText primary="User Manage" />
-          </ListItem>
+            <ListItemText primary="User Management" />
+          </ListItemButton>
         )}
 
-        <ListItem button onClick={handleMasterDataClick}>
+        <ListItemButton onClick={handleMasterDataClick}>
           <ListItemIcon>
             <ListAltIcon className="icon" />
           </ListItemIcon>
@@ -119,14 +150,13 @@ const Sidebar = () => {
           ) : (
             <ExpandMoreIcon className="icon" />
           )}
-        </ListItem>
+        </ListItemButton>
 
         <Collapse in={masterDataOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {masterDataPaths.map((item, index) => (
-              <ListItem
-                key={index}
-                button
+            {masterDataPaths.map((item) => (
+              <ListItemButton
+                key={item.path}
                 component={Link}
                 to={item.path}
                 className={
@@ -139,7 +169,7 @@ const Sidebar = () => {
                   <BuildIcon className="subsection-icon" />
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
-              </ListItem>
+              </ListItemButton>
             ))}
           </List>
         </Collapse>

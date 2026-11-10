@@ -10,43 +10,37 @@ const axiosInstance = axios.create({
   }
 });
 
-// Add a request interceptor for authentication
+// Attach the JWT (if any) to every request
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Get token from local storage
     const token = localStorage.getItem(apiConfig.STORAGE_KEYS.TOKEN);
-    
-    // If token exists, add to headers
     if (token) {
       config.headers[apiConfig.AUTH_HEADER] = `${apiConfig.TOKEN_PREFIX} ${token}`;
     }
-    
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Add a response interceptor to handle common errors
+// Handle expired / invalid sessions
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Handle 401 Unauthorized errors (token expired or invalid)
-    if (error.response && error.response.status === 401) {
-      console.log('Authentication error, redirecting to login...');
-      // Clear auth data
+    const status = error.response?.status;
+    const url = error.config?.url || '';
+    const isLoginCall = url.includes('/auth/login');
+
+    // A 401 from the login endpoint just means "wrong credentials" – let the form show it.
+    if (status === 401 && !isLoginCall) {
       localStorage.removeItem(apiConfig.STORAGE_KEYS.TOKEN);
       localStorage.removeItem(apiConfig.STORAGE_KEYS.USER);
-      
-      // Redirect to login page if not already there
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/';
+
+      const onPublicPage = ['/', '/login'].includes(window.location.pathname);
+      if (!onPublicPage) {
+        window.location.assign('/login');
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
